@@ -1,0 +1,118 @@
+/* Symphony Heights Custom Typography */
+
+@font-face {
+  font-family: 'Owners';
+  src: url('/Owners%20Font/fonnts.com-Owners_Light.otf') format('opentype'),
+       url('/Owners Font/fonnts.com-Owners_Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Owners';
+  src: url('/Owners%20Font/fonnts.com-Owners.otf') format('opentype'),
+       url('/Owners Font/fonnts.com-Owners.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Owners';
+  src: url('/Owners%20Font/fonnts.com-Owners_Medium.otf') format('opentype'),
+       url('/Owners Font/fonnts.com-Owners_Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Owners';
+  src: url('/Owners%20Font/fonnts.com-Owners_Bold.otf') format('opentype'),
+       url('/Owners Font/fonnts.com-Owners_Bold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Owners';
+  src: url('/Owners%20Font/fonnts.com-Owners_Bold.otf') format('opentype'),
+       url('/Owners Font/fonnts.com-Owners_Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Owners';
+  src: url('/Owners%20Font/fonnts.com-Owners_Black.otf') format('opentype'),
+       url('/Owners Font/fonnts.com-Owners_Black.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Owners';
+  src: url('/Owners%20Font/fonnts.com-Owners_Black.otf') format('opentype'),
+       url('/Owners Font/fonnts.com-Owners_Black.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Utile';
+  src: url('/Utile%20Font/Utile-Regular-GFXTRA.COM-iF66f3bd3b42c35.ttf') format('truetype'),
+       url('/Utile Font/Utile-Regular-GFXTRA.COM-iF66f3bd3b42c35.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Utile';
+  src: url('/Utile%20Font/Utile-Regular-GFXTRA.COM-iF66f3bd3b42c35.ttf') format('truetype'),
+       url('/Utile Font/Utile-Regular-GFXTRA.COM-iF66f3bd3b42c35.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Utile';
+  src: url('/Utile%20Font/Utile-Bold-GFXTRA.COM-iF66f3bd3acea1d.ttf') format('truetype'),
+       url('/Utile Font/Utile-Bold-GFXTRA.COM-iF66f3bd3acea1d.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Utile';
+  src: url('/Utile%20Font/Utile-Bold-GFXTRA.COM-iF66f3bd3acea1d.ttf') format('truetype'),
+       url('/Utile Font/Utile-Bold-GFXTRA.COM-iF66f3bd3acea1d.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Utile';
+  src: url('/Utile%20Font/Utile-Italic-GFXTRA.COM-iF66f3bd3b02227.ttf') format('truetype'),
+       url('/Utile Font/Utile-Italic-GFXTRA.COM-iF66f3bd3b02227.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Utile';
+  src: url('/Utile%20Font/Utile-Bold-Italic-GFXTRA.COM-iF66f3bd3ac2903.ttf') format('truetype'),
+       url('/Utile Font/Utile-Bold-Italic-GFXTRA.COM-iF66f3bd3ac2903.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}

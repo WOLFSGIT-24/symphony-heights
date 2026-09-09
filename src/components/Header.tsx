@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Image } from '@/components/ui/image';
-import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
-import { projectSnapshot } from '@/lib/data';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Menu, X, Phone } from "lucide-react";
+import { projectSnapshot } from "@/lib/data";
 
 interface HeaderProps {
   onOpenContactForm?: () => void;
@@ -14,64 +13,68 @@ export default function Header({ onOpenContactForm }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
 
   const navItems = [
-    { label: 'About', href: '#about' },
-    { label: 'Plots', href: '#plots' },
-    { label: 'Amenities', href: '#amenities' },
-    { label: 'Location', href: '#location' },
-    { label: 'Contact', href: '#own-legacy' },
+    { label: "About", href: "#about" },
+    { label: "Plots", href: "#plots" },
+    { label: "Amenities", href: "#amenities" },
+    { label: "Location", href: "#location" },
+    { label: "Contact", href: "#own-legacy" },
   ];
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
+      setIsScrolled(window.scrollY > 30);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleNavClick = (href: string) => {
     setIsMenuOpen(false);
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+    document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleLogoClick = () => {
     setIsMenuOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-primary/20 shadow-lg transition-all duration-300"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-background/95 backdrop-blur-md border-b border-primary/20 shadow-md py-2 sm:py-3"
+          : "bg-background/90 backdrop-blur-sm border-b border-primary/10 py-2.5 sm:py-3.5"
+      }`}
     >
-      <div className="container mx-auto px-4 sm:px-6 md:px-8">
-        <div className="flex h-16 sm:h-20 md:h-24 items-center justify-between">
+      <div className="container mx-auto px-3 sm:px-6 md:px-8">
+        <div className="flex h-12 sm:h-14 md:h-16 items-center justify-between gap-2 sm:gap-4">
           {/* Logo */}
           <motion.button
             onClick={handleLogoClick}
-            initial={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, x: -15 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="cursor-pointer focus:outline-none flex items-center"
+            transition={{ duration: 0.5 }}
+            className="cursor-pointer focus:outline-none flex items-center shrink-0 max-w-[52%] sm:max-w-[60%] md:max-w-none"
             aria-label="Symphony Heights Home"
           >
             <img
               src="/combo-logo.png"
-              alt="Symphony Heights Logo"
-              className="h-9 sm:h-11 md:h-13 w-auto object-contain"
+              alt="Symphony Heights by Disha Properties Logo"
+              className="h-7 sm:h-9 md:h-11 lg:h-12 w-auto max-w-full object-contain"
             />
           </motion.button>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex flex-1 justify-center gap-10">
+          <nav className="hidden md:flex flex-1 justify-center gap-6 lg:gap-10">
             {navItems.map((item, index) => (
               <motion.button
                 key={item.label}
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                transition={{ duration: 0.5, delay: index * 0.08 }}
                 onClick={() => handleNavClick(item.href)}
-                className="font-paragraph text-sm uppercase tracking-widest transition-colors duration-300 text-warm-espresso hover:text-primary cursor-pointer font-medium"
+                className="font-paragraph text-xs lg:text-sm uppercase tracking-widest transition-colors duration-200 text-warm-espresso hover:text-primary cursor-pointer font-medium"
               >
                 {item.label}
               </motion.button>
@@ -79,13 +82,13 @@ export default function Header({ onOpenContactForm }: HeaderProps) {
           </nav>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-3 sm:gap-4 md:gap-6">
+          <div className="flex items-center gap-1.5 sm:gap-3 md:gap-4 shrink-0">
             <Button
-              className="font-paragraph font-medium tracking-wide transition-all duration-300
-                h-11 px-5 text-sm
-                sm:h-12 sm:px-6 sm:text-base
-                md:h-14 md:px-10 md:text-base
-                rounded-xl bg-primary text-white shadow-lg cursor-pointer hover:bg-primary/90"
+              className="font-paragraph font-semibold tracking-wide transition-all duration-300
+                h-8 px-2.5 text-[11px] rounded-lg
+                sm:h-9 sm:px-4 sm:text-xs sm:rounded-xl
+                md:h-11 md:px-6 md:text-sm
+                bg-primary text-white shadow-sm hover:bg-primary/90 cursor-pointer whitespace-nowrap"
               onClick={onOpenContactForm}
             >
               Enquire Now
@@ -94,33 +97,55 @@ export default function Header({ onOpenContactForm }: HeaderProps) {
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 transition-colors text-warm-espresso cursor-pointer"
+              className="md:hidden p-1.5 text-warm-espresso hover:text-primary transition-colors cursor-pointer rounded-lg hover:bg-primary/5"
               aria-label="Toggle menu"
             >
-              {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
+              {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <motion.nav
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden pb-4 space-y-3 bg-background/95"
-          >
-            {navItems.map((item) => (
-              <button
-                key={item.label}
-                onClick={() => handleNavClick(item.href)}
-                className="block w-full text-left font-paragraph text-sm uppercase tracking-widest py-2 transition-colors text-warm-espresso hover:text-primary cursor-pointer font-medium"
-              >
-                {item.label}
-              </button>
-            ))}
-          </motion.nav>
-        )}
+        {/* Mobile Navigation Dropdown */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.nav
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25 }}
+              className="md:hidden overflow-hidden pt-3 pb-4 border-t border-primary/10 mt-2 space-y-1 bg-background"
+            >
+              {navItems.map((item) => (
+                <button
+                  key={item.label}
+                  onClick={() => handleNavClick(item.href)}
+                  className="block w-full text-left font-paragraph text-xs uppercase tracking-widest py-2.5 px-2 rounded-lg transition-colors text-warm-espresso hover:text-primary hover:bg-primary/5 cursor-pointer font-semibold"
+                >
+                  {item.label}
+                </button>
+              ))}
+
+              <div className="pt-2 mt-2 border-t border-primary/10 flex flex-col gap-2">
+                <Button
+                  className="w-full bg-primary text-white hover:bg-primary/90 py-2.5 text-xs font-semibold rounded-lg cursor-pointer"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    onOpenContactForm?.();
+                  }}
+                >
+                  Schedule Site Visit
+                </Button>
+                <a
+                  href={`tel:${projectSnapshot.phone.replace(/\s+/g, "")}`}
+                  className="w-full flex items-center justify-center gap-2 py-2 text-xs font-semibold text-primary border border-primary/30 rounded-lg hover:bg-primary/5 transition-colors"
+                >
+                  <Phone size={13} />
+                  Call {projectSnapshot.phone}
+                </a>
+              </div>
+            </motion.nav>
+          )}
+        </AnimatePresence>
       </div>
     </header>
   );

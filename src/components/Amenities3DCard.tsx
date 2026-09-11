@@ -135,22 +135,14 @@ const AmenityCard: React.FC<{ amenity: ProjectAmenities; index: number }> = ({
       </motion.div>
 
       <motion.div
-        className="mt-5 md:mt-6"
+        className="mt-4 md:mt-5 text-left"
         initial={{ opacity: 0, y: 20 }}
         animate={itemInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.6, delay: index * 0.08 + 0.15 }}
       >
-        <div className="flex items-start justify-between gap-3 mb-2">
-          <h3 className="font-heading text-xl md:text-2xl text-foreground font-bold leading-snug">
-            {amenity.amenityName}
-          </h3>
-          <span className="font-mono text-primary text-xs uppercase tracking-widest font-semibold pt-1">
-            0{index + 1}
-          </span>
-        </div>
-        <p className="font-paragraph text-sm text-foreground/75 leading-relaxed">
-          {amenity.description}
-        </p>
+        <h3 className="font-heading text-xl md:text-2xl text-foreground font-bold leading-snug">
+          {amenity.amenityName}
+        </h3>
       </motion.div>
     </div>
   );
@@ -246,19 +238,11 @@ const MobileSlider: React.FC<{ amenities: ProjectAmenities[] }> = ({ amenities }
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="mb-6"
+        className="mb-6 text-center"
       >
-        {currentAmenity.category && (
-          <span className="inline-block font-paragraph text-xs uppercase tracking-widest text-primary font-semibold mb-3">
-            {currentAmenity.category}
-          </span>
-        )}
-        <h3 className="font-heading text-2xl text-soft-charcoal mb-3">
+        <h3 className="font-heading text-2xl text-soft-charcoal">
           {currentAmenity.amenityName}
         </h3>
-        <p className="font-paragraph text-sm text-muted-gray leading-relaxed mb-4">
-          {currentAmenity.description}
-        </p>
       </motion.div>
 
       {/* Navigation Controls */}

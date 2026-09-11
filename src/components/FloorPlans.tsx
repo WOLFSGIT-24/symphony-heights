@@ -61,24 +61,18 @@ export default function FloorPlans({
       <div className="max-w-6xl mx-auto px-6 md:px-12">
         {/* Section Heading */}
         <div className="text-center max-w-2xl mx-auto mb-12 space-y-4">
-          <span className="font-body text-xs font-bold text-navy-primary uppercase tracking-[0.25em] block">
-            Configurations
-          </span>
           <h2 className="font-display text-3xl sm:text-4xl text-navy-primary font-semibold leading-tight">
             Floor Plans
           </h2>
           <div className="h-[2px] w-16 bg-navy-primary mx-auto" />
-          <p className="font-body text-sm md:text-base text-gray-text leading-relaxed">
-            Spacious, airy 3 BHK layouts crafted with 100% Vastu principles and zero space wastage.
-          </p>
         </div>
 
         {/* 3 BHK Cards side-by-side */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl mx-auto items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto items-stretch">
           {plans.map((plan, idx) => (
             <div
               key={idx}
-              className="flex flex-col items-center text-center space-y-5 bg-[#FBF9FB] p-6 sm:p-8 rounded-xl border border-navy-primary/10 hover:border-navy-primary/30 transition-all duration-300 justify-between shadow-sm hover:shadow-md"
+              className="flex flex-col items-center text-center space-y-5 bg-white/40 p-6 rounded-xl border border-navy-primary/5 hover:border-navy-primary/10 transition-all duration-300 justify-between"
             >
               <div className="w-full space-y-4">
                 <div className="space-y-1">
@@ -105,34 +99,25 @@ export default function FloorPlans({
 
                   {/* Blur Overlay Shield */}
                   {!isUnlocked && (
-                    <div className="absolute inset-0 bg-black/10 flex flex-col items-center justify-center p-4">
-                      <div className="w-12 h-12 rounded-full bg-white/95 shadow-md flex items-center justify-center text-navy-primary mb-2 animate-pulse">
+                    <div className="absolute inset-0 bg-black/5 flex flex-col items-center justify-center p-4">
+                      <div className="w-12 h-12 rounded-full bg-white/90 shadow-md flex items-center justify-center text-navy-primary mb-2 animate-pulse">
                         <Lock className="h-5 w-5" />
                       </div>
                       <span className="text-[10px] font-bold text-navy-primary uppercase tracking-widest bg-white/90 px-3 py-1 rounded shadow-sm">
-                        Locked Preview
+                        Locked
                       </span>
                     </div>
                   )}
                 </div>
 
-                <div className="text-left bg-white p-3 rounded border border-navy-primary/5 space-y-1 text-xs text-gray-text">
-                  <div className="flex justify-between font-semibold">
-                    <span>RERA Carpet Area:</span>
-                    <span>1,174 Sq.Ft</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Balcony Area:</span>
-                    <span>{idx === 0 ? "118" : "147"} Sq.Ft</span>
-                  </div>
-                </div>
+
               </div>
 
               {/* Call To Action Button */}
-              <div className="pt-2 w-full">
+              <div className="pt-4 w-full">
                 <button
                   onClick={() => handleAction(plan)}
-                  className="w-full bg-navy-dark text-white font-body text-xs font-bold tracking-widest uppercase px-8 py-3.5 hover:bg-navy-primary transition-all rounded-full cursor-pointer shadow-md"
+                  className="w-full sm:w-auto bg-black text-white font-body text-xs font-bold tracking-widest uppercase px-8 py-3.5 hover:bg-gold hover:text-navy-dark transition-all rounded-full cursor-pointer shadow-md"
                 >
                   {isUnlocked ? "View Floor Plan" : "Get Floor Plan"}
                 </button>
@@ -163,7 +148,7 @@ export default function FloorPlans({
               </div>
               <button
                 onClick={() => setSelectedPlan(null)}
-                className="text-gray-text hover:text-navy-primary font-body text-xs font-bold bg-navy-primary/5 hover:bg-navy-primary/10 px-3.5 py-2 rounded focus:outline-none cursor-pointer"
+                className="text-gray-text hover:text-navy-primary font-body text-xs font-bold bg-navy-primary/5 hover:bg-navy-primary/10 px-3.5 py-2 rounded focus:outline-none"
               >
                 Close ✕
               </button>
@@ -179,14 +164,15 @@ export default function FloorPlans({
 
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-body border-t border-navy-primary/10 pt-4">
               <span className="text-gray-text italic">
-                *Dimension standards adhere to RERA carpet guidelines. Final layout details subject to approval.
+                *Dimension standards adhere to RERA carpet guidelines. Final
+                layout details subject to approval.
               </span>
               <button
                 onClick={() => {
                   onSelectUnit(selectedPlan.type);
                   setSelectedPlan(null);
                 }}
-                className="flex items-center justify-center gap-2 bg-navy-primary text-white font-body text-xs font-bold tracking-widest uppercase px-8 py-4 hover:bg-navy-dark transition-colors shadow-lg rounded-sm cursor-pointer"
+                className="flex items-center justify-center gap-2 bg-navy-primary text-white font-body text-xs font-bold tracking-widest uppercase px-8 py-4.5 hover:bg-navy-dark transition-colors shadow-lg rounded-sm"
               >
                 Request Information
               </button>

@@ -14,8 +14,10 @@ export default function Header({ onOpenContactForm }: HeaderProps) {
 
   const navItems = [
     { label: "About", href: "#about" },
-    { label: "Plots", href: "#plots" },
+    { label: "Master Plan", href: "#master-plan" },
     { label: "Amenities", href: "#amenities" },
+    { label: "Floor Plans", href: "#plots" },
+    { label: "Gallery", href: "#gallery" },
     { label: "Location", href: "#location" },
     { label: "Contact", href: "#own-legacy" },
   ];
@@ -82,25 +84,33 @@ export default function Header({ onOpenContactForm }: HeaderProps) {
           </nav>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-1.5 sm:gap-3 md:gap-4 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 shrink-0">
+            {/* Desktop Only Enquire Button */}
             <Button
-              className="font-paragraph font-semibold tracking-wide transition-all duration-300
-                h-8 px-2.5 text-[11px] rounded-lg
-                sm:h-9 sm:px-4 sm:text-xs sm:rounded-xl
-                md:h-11 md:px-6 md:text-sm
+              className="hidden md:flex font-paragraph font-semibold tracking-wide transition-all duration-300
+                h-10 px-5 text-xs lg:text-sm rounded-xl
                 bg-primary text-white shadow-sm hover:bg-primary/90 cursor-pointer whitespace-nowrap"
               onClick={onOpenContactForm}
             >
               Enquire Now
             </Button>
 
-            {/* Mobile Menu Toggle */}
+            {/* Mobile Only: Circular Phone Call Button */}
+            <a
+              href={`tel:${projectSnapshot.phone.replace(/\s+/g, "")}`}
+              className="md:hidden w-10 h-10 rounded-full border border-[#4E3D35]/25 bg-white/60 backdrop-blur-xs flex items-center justify-center text-[#4E3D35] hover:bg-[#4E3D35]/5 active:scale-95 transition-all shadow-xs"
+              aria-label={`Call ${projectSnapshot.phone}`}
+            >
+              <Phone className="w-4 h-4 text-[#4E3D35]" />
+            </a>
+
+            {/* Mobile Only: Circular Menu Toggle Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-1.5 text-warm-espresso hover:text-primary transition-colors cursor-pointer rounded-lg hover:bg-primary/5"
+              className="md:hidden w-10 h-10 rounded-full border border-[#4E3D35]/25 bg-white/60 backdrop-blur-xs flex items-center justify-center text-[#4E3D35] hover:bg-[#4E3D35]/5 active:scale-95 transition-all shadow-xs cursor-pointer"
               aria-label="Toggle menu"
             >
-              {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+              {isMenuOpen ? <X className="w-4 h-4 text-[#4E3D35]" /> : <Menu className="w-4 h-4 text-[#4E3D35]" />}
             </button>
           </div>
         </div>

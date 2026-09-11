@@ -3,22 +3,18 @@ import React, { useEffect, useState, useRef } from 'react';
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
 import { BaseCrudService } from '@/integrations';
 import {
-  GatedLivingBenefits,
-  InfrastructureDetails,
-  InvestmentHighlights,
-  LegalApprovals,
   PlotConfigurations,
   ProjectAmenities,
 } from '@/entities';
 import { Image } from '@/components/ui/image';
 import { Button } from '@/components/ui/button';
-import { MapPin, Phone, Mail, ArrowRight, Check, Lock, TrendingUp, Sparkles, Target, Shield, Zap, Award, BarChart3, Download } from 'lucide-react';
+import { MapPin, Phone, Mail, ArrowRight, Check, Lock, TrendingUp, Sparkles, Target, Shield, Zap, Award, BarChart3, Download, ZoomIn, X } from 'lucide-react';
 import Loader from '@/components/Loader';
 import Footer from '@/components/Footer';
 import Amenities3DSection from '@/components/Amenities3DCard';
 import ContactFormModal from '@/components/ContactFormModal';
 import Header from '@/components/Header';
-import { projectSnapshot, locationsData } from '@/lib/data';
+import { projectSnapshot, locationsData, floorPlansData, FloorPlanUnit } from '@/lib/data';
 
 // --- Utility Components ---
 
@@ -49,33 +45,21 @@ const SectionDivider = () => (
 // --- Main Component ---
 
 export default function HomePage() {
-  const [legalApprovals, setLegalApprovals] = useState<LegalApprovals[]>([]);
   const [plotConfigs, setPlotConfigs] = useState<PlotConfigurations[]>([]);
-  const [infrastructure, setInfrastructure] = useState<InfrastructureDetails[]>([]);
   const [amenities, setAmenities] = useState<ProjectAmenities[]>([]);
-  const [gatedBenefits, setGatedBenefits] = useState<GatedLivingBenefits[]>([]);
-  const [investmentHighlights, setInvestmentHighlights] = useState<InvestmentHighlights[]>([]);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [showLoader, setShowLoader] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [legal, plots, infra, amen, gated, investment] = await Promise.all([
-          BaseCrudService.getAll<LegalApprovals>('legalapprovals'),
+        const [plots, amen] = await Promise.all([
           BaseCrudService.getAll<PlotConfigurations>('plotconfigurations'),
-          BaseCrudService.getAll<InfrastructureDetails>('infrastructuredetails'),
           BaseCrudService.getAll<ProjectAmenities>('projectamenities'),
-          BaseCrudService.getAll<GatedLivingBenefits>('gatedlivingbenefits'),
-          BaseCrudService.getAll<InvestmentHighlights>('investmenthighlights'),
         ]);
 
-        setLegalApprovals(legal.items.filter(item => item.isVerified));
         setPlotConfigs(plots.items.sort((a, b) => (a.areaSqFt || 0) - (b.areaSqFt || 0)));
-        setInfrastructure(infra.items.filter(item => item.isAvailable).sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0)));
         setAmenities(amen.items.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0)));
-        setGatedBenefits(gated.items.filter(item => item.isActive).sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0)));
-        setInvestmentHighlights(investment.items.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0)));
       } catch (error) {
         console.error("Failed to fetch data", error);
       } finally {
@@ -120,19 +104,37 @@ export default function HomePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1 }}
+              className="pb-14 md:pb-0"
             >
               <HeroSection onOpenContactForm={() => setIsContactModalOpen(true)} />
               <ProjectOverviewSection onOpenContactForm={() => setIsContactModalOpen(true)} />
-              <PlotConfigurationsSection plotConfigs={plotConfigs} onOpenContactForm={() => setIsContactModalOpen(true)} />
-              <LocationSection onOpenContactForm={() => setIsContactModalOpen(true)} />
-              <InvestmentSection investmentHighlights={investmentHighlights} onOpenContactForm={() => setIsContactModalOpen(true)} />
+              <MasterPlanSection onOpenContactForm={() => setIsContactModalOpen(true)} />
               <Amenities3DSection amenities={amenities} />
-              <GatedLivingSection gatedBenefits={gatedBenefits} onOpenContactForm={() => setIsContactModalOpen(true)} />
-              <InfrastructureSection infrastructure={infrastructure} onOpenContactForm={() => setIsContactModalOpen(true)} />
-              <LegalSection legalApprovals={legalApprovals} onOpenContactForm={() => setIsContactModalOpen(true)} />
+              <PlotConfigurationsSection plotConfigs={plotConfigs} onOpenContactForm={() => setIsContactModalOpen(true)} />
+              <GallerySection onOpenContactForm={() => setIsContactModalOpen(true)} />
+              <LocationSection onOpenContactForm={() => setIsContactModalOpen(true)} />
               <FinalCTASection onOpenContactForm={() => setIsContactModalOpen(true)} />
               <Footer />
             </motion.main>
+
+            {/* Mobile Sticky Bottom Action Bar (Matches Reference Design) */}
+            <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-[#4E3D35] flex items-stretch shadow-2xl border-t border-white/10">
+              <a
+                href={`tel:${projectSnapshot.phone.replace(/\s+/g, "")}`}
+                className="flex-1 py-3.5 px-4 flex items-center justify-center gap-2 text-white font-bold text-xs uppercase tracking-widest border-r border-white/20 active:bg-white/10 transition-colors"
+                aria-label={`Call ${projectSnapshot.phone}`}
+              >
+                <Phone className="w-3.5 h-3.5 text-white fill-white" />
+                <span>CALL NOW</span>
+              </a>
+              <button
+                onClick={() => setIsContactModalOpen(true)}
+                className="flex-1 py-3.5 px-4 flex items-center justify-center gap-2 text-white font-bold text-xs uppercase tracking-widest active:bg-white/10 transition-colors cursor-pointer"
+                aria-label="Enquire Now"
+              >
+                <span>ENQUIRE NOW</span>
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -155,117 +157,163 @@ const HeroSection = ({ onOpenContactForm }: { onOpenContactForm: () => void }) =
     <section
       ref={ref}
       id="overview"
-      className="relative w-full min-h-screen overflow-hidden bg-old-lace"
+      className="relative w-full overflow-hidden bg-old-lace"
     >
-      <motion.div
-        style={{ opacity }}
-        className="relative z-10 grid grid-cols-1 lg:grid-cols-2 min-h-screen"
-      >
-        {/* LEFT: MASTERPLAN / HERO IMAGE */}
-        <div className="relative h-[50vh] sm:h-[55vh] lg:h-auto order-1 lg:order-1">
-          <Image 
-            src="/hero-bg.png" 
-            alt="Symphony Heights Tower - Boutique Community" 
-            className="absolute inset-0 w-full h-full object-cover object-bottom" 
-          />
+      <motion.div style={{ opacity }} className="relative z-10 w-full">
+        {/* ================= MOBILE HERO VIEW (Matches reference design) ================= */}
+        <div className="lg:hidden flex flex-col w-full pt-16 sm:pt-20">
+          {/* Top Hero Image with Overlapping Flexi Plan Box */}
+          <div className="relative w-full h-[52vh] min-h-[350px] max-h-[480px]">
+            <Image 
+              src="/hero-bg.png" 
+              alt="Symphony Heights Tower - Boutique Community" 
+              className="w-full h-full object-cover object-bottom" 
+            />
+            {/* Soft gradient at bottom of image */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
-          {/* Dark cinematic overlay */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-black/60 via-black/30 to-transparent" />
-
-          {/* Subtle brand mark */}
-          <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 text-white/90 text-[10px] sm:text-xs tracking-[0.3em] uppercase font-bold">
-            Boutique Community • Hennur
+            {/* Overlapping Brown Flexi Payment Box */}
+            <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 w-[86%] max-w-[320px] bg-[#4E3D35] text-white py-3.5 px-4 shadow-xl z-20 rounded-xl border border-white/10 text-center">
+              <div className="font-paragraph text-[10.5px] font-bold tracking-[0.2em] text-[#d8c8bd] uppercase">
+                FLEXI PAYMENT PLAN
+              </div>
+              <div className="text-2xl font-heading font-extrabold leading-tight mt-0.5 tracking-wider text-white">
+                25 : 25 : 25 : 25
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* RIGHT: CONTENT PANEL */}
-        <div className="flex items-center justify-center px-4 py-8 sm:px-6 sm:py-10 md:px-10 lg:px-16 xl:px-20 bg-white order-2 lg:order-2">
-          <div className="max-w-xl w-full text-left">
-            
-            {/* Badge */}
-            <CinematicReveal delay={0.2}>
-              <span className="inline-block mb-4 sm:mb-6 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary text-xs tracking-wider uppercase font-semibold">
-                Boutique 3 BHK Residences
-              </span>
-            </CinematicReveal>
+          {/* Mobile Bottom Content */}
+          <div className="px-5 pt-12 pb-10 flex flex-col items-center max-w-md mx-auto w-full">
+            {/* White Property Card */}
+            <div className="w-full bg-white rounded-2xl p-4 sm:p-5 shadow-[0_4px_20px_rgba(0,0,0,0.06)] border border-neutral-100 flex items-center justify-between">
+              <div className="space-y-1">
+                <div className="text-[10px] sm:text-[11px] font-bold text-soft-charcoal/60 uppercase tracking-wider font-paragraph">
+                  PREMIUM 3 BHK HOMES
+                </div>
+                <div className="text-base sm:text-lg font-heading font-extrabold text-soft-charcoal tracking-tight leading-none">
+                  STARTING ₹ 1.9 CR*
+                </div>
+              </div>
 
-            {/* Heading */}
-            <CinematicReveal delay={0.35}>
-              <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold leading-[1.18] text-soft-charcoal mb-4 sm:mb-6">
-                Exclusive <span className="text-primary whitespace-nowrap">3 BHK</span> Homes
-                <br />
-                Starting at <span className="text-primary whitespace-nowrap">₹1.9 Cr*</span>
-              </h1>
-            </CinematicReveal>
+              <div className="h-9 w-px bg-neutral-200 mx-3" />
 
-            {/* Description */}
-            <CinematicReveal delay={0.55}>
-              <p className="font-paragraph text-sm sm:text-base md:text-lg text-muted-gray leading-relaxed mb-6 sm:mb-8 space-y-1">
-                Your gateway to luxury living in Hennur, North Bangalore.
-                <br />
-                An intimate sanctuary of 128 boutique residences across a 1 Acre canvas.
-                <br />
-                <span className="text-primary font-semibold">
-                  Grade-A Development by Disha Properties
+              <div className="flex items-center gap-1.5 font-paragraph shrink-0 text-soft-charcoal">
+                <MapPin className="h-4 w-4 text-soft-charcoal stroke-[2.2] shrink-0" />
+                <span className="text-xs sm:text-sm font-extrabold uppercase tracking-wider">
+                  HENNUR
                 </span>
-              </p>
-            </CinematicReveal>
+              </div>
+            </div>
 
-            {/* Feature checklist */}
-            <CinematicReveal delay={0.75}>
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-3.5 gap-x-4 sm:gap-x-6 mb-8 sm:mb-10">
-                {[
-                  'Boutique Scale (128 Units)',
-                  'Flexi Payment Plan 25:25:25:25',
-                  '3 Tiers of Curated Amenities',
-                  'Rooftop Infinity Lap Pool',
-                  'Karnataka RERA Approved',
-                ].map((item) => (
-                  <li key={item} className="flex items-center gap-2.5 sm:gap-3">
-                    <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-primary text-white flex items-center justify-center text-[10px] sm:text-xs flex-shrink-0 font-bold">
-                      ✓
-                    </span>
-                    <span className="font-paragraph text-xs sm:text-sm md:text-base text-soft-charcoal font-medium">
-                      {item}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </CinematicReveal>
-
-            {/* CTA */}
-            <CinematicReveal delay={0.95} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            {/* Mobile Stacked Action Buttons */}
+            <div className="w-full flex flex-col gap-3 mt-8 sm:mt-9">
               <Button
                 size="lg"
-                className="bg-primary text-white hover:bg-primary/90
-                           px-7 py-3.5 sm:px-8 sm:py-4 rounded-xl text-sm sm:text-base font-semibold
-                           transition-all duration-300 hover:scale-[1.02] shadow-md w-full sm:w-auto cursor-pointer"
+                className="w-full bg-[#4E3D35] hover:bg-[#3f3029] text-white py-4 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-md active:scale-[0.99] transition-all cursor-pointer h-auto"
                 onClick={onOpenContactForm}
               >
-                Schedule Visit
+                <span>BOOK A SITE VISIT</span>
+                <ArrowRight className="w-4 h-4" />
               </Button>
 
               <Button
                 size="lg"
                 variant="outline"
-                className="border-2 border-primary text-primary
-                           hover:bg-pale-sage/20
-                           px-7 py-3.5 sm:px-8 sm:py-4 rounded-xl text-sm sm:text-base font-semibold w-full sm:w-auto cursor-pointer"
-                onClick={() =>
-                  document.getElementById('plots')?.scrollIntoView({ behavior: 'smooth' })
-                }
+                className="w-full bg-transparent border-[1.5px] border-[#4E3D35] text-[#4E3D35] hover:bg-[#4E3D35]/5 py-4 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 active:scale-[0.99] transition-all cursor-pointer h-auto"
+                onClick={onOpenContactForm}
               >
-                View Floor Plans
+                <Download className="w-4 h-4" />
+                <span>BROCHURE</span>
               </Button>
-            </CinematicReveal>
+            </div>
+          </div>
+        </div>
+
+        {/* ================= DESKTOP HERO VIEW ================= */}
+        <div className="hidden lg:grid lg:grid-cols-2 min-h-screen">
+          {/* LEFT: HERO IMAGE */}
+          <div className="relative h-full">
+            <Image 
+              src="/hero-bg.png" 
+              alt="Symphony Heights Tower - Boutique Community" 
+              className="absolute inset-0 w-full h-full object-cover object-bottom" 
+            />
+            <div className="absolute inset-0 bg-gradient-to-tr from-black/60 via-black/30 to-transparent" />
+          </div>
+
+          {/* RIGHT: CONTENT PANEL */}
+          <div className="flex items-center justify-center px-8 lg:px-16 xl:px-20 py-12 bg-old-lace">
+            <div className="max-w-xl w-full text-left">
+              {/* Heading */}
+              <CinematicReveal delay={0.2}>
+                <h1 className="font-heading text-3xl xl:text-5xl font-extrabold leading-[1.12] text-soft-charcoal mb-5">
+                  Your First Premium Home
+                  <br /> Should Never Be a
+                  <br /> Compromise.
+                </h1>
+              </CinematicReveal>
+
+              {/* Description */}
+              <CinematicReveal delay={0.35}>
+                <p className="font-paragraph text-sm md:text-base text-muted-gray leading-relaxed mb-6 max-w-lg">
+                  Introducing Symphony Heights by Disha Properties—a boutique community of just 128 premium 3 BHK residences in the heart of Hennur. Designed for the perfect balance of connectivity, lifestyle, and long-term value.
+                </p>
+              </CinematicReveal>
+
+              {/* Price & Payment Plan Box (Desktop) */}
+              <CinematicReveal delay={0.5}>
+                <div className="bg-[#4E3D35] text-white rounded-xl p-5 mb-6 max-w-xs shadow-md">
+                  <span className="text-[11px] font-bold text-white/70 uppercase tracking-[0.16em] block mb-1 font-paragraph">
+                    STARTING FROM
+                  </span>
+                  <div className="font-heading text-3xl font-extrabold text-white tracking-tight mb-2.5">
+                    ₹1.9 Crore*
+                  </div>
+                  <div className="w-full h-px bg-white/20 mb-2.5" />
+                  <span className="text-[11px] font-bold text-white uppercase tracking-[0.16em] block mb-0.5 font-paragraph">
+                    FLEXI PAYMENT PLAN
+                  </span>
+                  <p className="font-paragraph text-xs text-white/80">
+                    Pay 25% now and nothing for 1 year
+                  </p>
+                </div>
+              </CinematicReveal>
+
+              {/* Desktop CTA Buttons */}
+              <CinematicReveal delay={0.65} className="flex items-center gap-3.5">
+                <Button
+                  size="lg"
+                  className="bg-[#4E3D35] text-white hover:bg-[#3f3029]
+                             px-6 py-4 rounded-xl text-xs font-bold uppercase tracking-wider
+                             transition-all duration-300 hover:scale-[1.02] shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                  onClick={onOpenContactForm}
+                >
+                  <span>BOOK A SITE VISIT</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Button>
+
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border border-[#4E3D35]/30 bg-warm-beige/30 text-soft-charcoal hover:bg-warm-beige/70
+                             px-6 py-4 rounded-xl text-xs font-bold uppercase tracking-wider
+                             transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                  onClick={onOpenContactForm}
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>BROCHURE</span>
+                </Button>
+              </CinematicReveal>
+            </div>
           </div>
         </div>
       </motion.div>
 
-      {/* Scroll Indicator */}
+      {/* Desktop Scroll Indicator */}
       <motion.div
         style={{ opacity }}
-        className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 hidden lg:flex"
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 hidden lg:flex"
       >
         <span className="text-[10px] uppercase tracking-[0.35em] text-primary/70 font-semibold">
           Scroll
@@ -281,42 +329,318 @@ const HeroSection = ({ onOpenContactForm }: { onOpenContactForm: () => void }) =
 };
 
 const ProjectOverviewSection = ({ onOpenContactForm }: { onOpenContactForm: () => void }) => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-20%" });
-  
   return (
-    <section id="about" ref={ref} className="py-16 sm:py-24 md:py-32 bg-warm-beige relative">
+    <section id="about" className="py-16 sm:py-24 md:py-28 bg-warm-beige relative overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 md:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12 md:gap-0 divide-y md:divide-y-0 md:divide-x divide-primary/15">
-          {[
-            { value: "128", label: "Boutique Residences", suffix: "" },
-            { value: "1.9", label: "Starting Price", suffix: " Cr*" },
-            { value: "100", label: "Vastu Compliant", suffix: "%" }
-          ].map((stat, i) => (
-            <div key={i} className="flex flex-col items-center justify-center p-6 sm:p-10 md:p-12 text-center">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 1, delay: i * 0.2 }}
-                className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-warm-espresso font-bold mb-2 sm:mb-3 leading-none"
-              >
-                {stat.value}{stat.suffix}
-              </motion.div>
-              <div className="font-paragraph text-xs sm:text-sm uppercase tracking-[0.18em] text-primary font-semibold">
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+          {/* Left Column: Paragraph & Overview */}
+          <div className="lg:col-span-6 space-y-5 sm:space-y-6 text-left">
+            <CinematicReveal>
+              <span className="font-paragraph text-xs sm:text-sm uppercase tracking-[0.2em] text-primary block font-semibold">
+                The Intimate Scale
+              </span>
+            </CinematicReveal>
 
-        <div className="mt-12 sm:mt-16 md:mt-24 max-w-3xl mx-auto text-center">
+            <CinematicReveal delay={0.1}>
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-warm-espresso font-bold leading-[1.15]">
+                Boutique Living. <br className="hidden sm:inline" />
+                Thoughtfully Designed.
+              </h2>
+            </CinematicReveal>
+
+            <CinematicReveal delay={0.2}>
+              <p className="font-paragraph text-sm sm:text-base md:text-lg text-warm-espresso/85 leading-relaxed">
+                Introducing <strong className="font-bold text-primary">Symphony Heights</strong> by Disha Properties. A thoughtfully conceived boutique community in Hennur, North Bangalore, offering low density, three levels of lifestyle amenities, and exceptional capital appreciation.
+              </p>
+            </CinematicReveal>
+
+            <CinematicReveal delay={0.3}>
+              <p className="font-paragraph text-sm sm:text-base text-warm-espresso/75 leading-relaxed">
+                Luxury isn't measured by overcrowded spaces. It's reflected in intelligent planning, privacy, and refined attention to detail for an exclusive community of just 128 families.
+              </p>
+            </CinematicReveal>
+
+            <CinematicReveal delay={0.4} className="pt-2">
+              <Button
+                className="bg-primary text-white hover:bg-primary/90 rounded-xl px-7 py-3.5 font-paragraph font-semibold text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-md cursor-pointer"
+                onClick={onOpenContactForm}
+              >
+                Enquire Now
+              </Button>
+            </CinematicReveal>
+          </div>
+
+          {/* Right Column: Image */}
+          <div className="lg:col-span-6">
+            <CinematicReveal delay={0.25}>
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-primary/10 aspect-[4/3] sm:aspect-[16/11] group">
+                <Image
+                  src="/intimate-scale.jpg"
+                  alt="Symphony Heights Boutique Architecture"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+            </CinematicReveal>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const masterPlanDetails: Record<string, {
+  tagline: string;
+  summary: string;
+  refCode: string;
+  highlights: string[];
+}> = {
+  ground: {
+    tagline: "Arrival & Active Community",
+    summary: "Grand arrival plazas, lush landscaped recreation buffers, and dedicated parking infrastructure.",
+    refCode: "DWG-LVL-01 / GD",
+    highlights: [
+      "Grand Entrance & Waiting Plaza",
+      "Covered Seating Pavilion",
+      "Cricket Practice Pitch & Tot-Lot",
+      "Dedicated Pet Park & Skating Rink",
+      "Resident & Visitor Car Parking",
+      "24/7 Security Cabin & Drop-off Lobby"
+    ]
+  },
+  podium: {
+    tagline: "Clubhouse & Lifestyle Deck",
+    summary: "Three levels of curated indoor recreation, banquet spaces, wellness lawns, and social lounges.",
+    refCode: "DWG-LVL-02 / PD",
+    highlights: [
+      "Double Height Grand Party Hall",
+      "High-Performance Fitness Gym",
+      "Zen Yoga Deck with Pergola",
+      "Al Fresco Dining & BBQ Zone",
+      "WFH & Co-working Lounge",
+      "Elevated Scenic Walkway"
+    ]
+  },
+  rooftop: {
+    tagline: "Sky Amenities & Sunset Views",
+    summary: "Panoramic elevated leisure with infinity lap pool, sports courts, and stargazing decks.",
+    refCode: "DWG-LVL-03 / RF",
+    highlights: [
+      "Infinity Edge Sky Lap Pool",
+      "Futsal & Badminton Court",
+      "Sky Deck & Pool Loungers",
+      "Sunset Yoga & Meditation Lawn",
+      "Kids Splash Pool & Play Wall",
+      "Spa & Private Cabana Seating"
+    ]
+  }
+};
+
+const MasterPlanSection = ({ onOpenContactForm }: { onOpenContactForm: () => void }) => {
+  const [activeTab, setActiveTab] = useState<string>('ground');
+  const [activeBlueprintModal, setActiveBlueprintModal] = useState<FloorPlanUnit | null>(null);
+
+  const currentPlan = floorPlansData.find((plan) => plan.id === activeTab) || floorPlansData[0];
+  const levelMeta = masterPlanDetails[activeTab] || masterPlanDetails.ground;
+
+  return (
+    <section id="master-plan" className="py-16 sm:py-24 md:py-32 bg-old-lace relative scroll-mt-20">
+      <div className="container mx-auto px-4 sm:px-6 md:px-8">
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
           <CinematicReveal>
-            <p className="font-paragraph text-base sm:text-lg md:text-xl text-warm-espresso leading-relaxed font-normal">
-              Introducing <strong className="font-bold text-primary">Symphony Heights</strong> by Disha Properties. A thoughtfully conceived boutique community in Hennur, North Bangalore, offering low density, three levels of lifestyle amenities, and exceptional capital appreciation.
+            <span className="font-paragraph text-xs sm:text-sm uppercase tracking-[0.22em] text-primary block mb-2 sm:mb-3 font-semibold">
+              Master Plan
+            </span>
+          </CinematicReveal>
+
+          <CinematicReveal delay={0.1}>
+            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-soft-charcoal font-bold leading-tight mb-3 sm:mb-4">
+              Architectural Drafting
+            </h2>
+          </CinematicReveal>
+
+          <CinematicReveal delay={0.15}>
+            <div className="w-16 h-[2px] bg-primary mx-auto mb-4 sm:mb-5" />
+          </CinematicReveal>
+
+          <CinematicReveal delay={0.2}>
+            <p className="font-paragraph text-sm sm:text-base text-muted-gray leading-relaxed max-w-2xl mx-auto">
+              Meticulously designed floor plans that optimize usable space, facilitate natural breeze channels, and welcome beautiful morning sunlight.
             </p>
           </CinematicReveal>
         </div>
+
+        {/* Modern Segmented Level Filter Tabs */}
+        <CinematicReveal delay={0.25}>
+          <div className="flex justify-center mb-10 sm:mb-12">
+            <div className="inline-flex p-1.5 rounded-xl sm:rounded-2xl bg-warm-beige/50 border border-primary/10 shadow-inner gap-1.5 sm:gap-2">
+              {[
+                { id: 'ground', label: 'GROUND' },
+                { id: 'podium', label: 'PODIUM' },
+                { id: 'rooftop', label: 'ROOF TOP' },
+              ].map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`px-5 py-2 sm:px-7 sm:py-2.5 rounded-lg sm:rounded-xl font-paragraph text-xs font-bold tracking-wider uppercase transition-all duration-300 cursor-pointer ${
+                      isActive
+                        ? 'bg-primary text-white shadow-md'
+                        : 'text-soft-charcoal/80 hover:text-soft-charcoal hover:bg-white/60'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </CinematicReveal>
+
+        {/* Master Plan Card */}
+        <CinematicReveal delay={0.3}>
+          <div className="bg-white border border-primary/15 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 lg:p-12 shadow-xl max-w-5xl mx-auto transition-all duration-500">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+              
+              {/* Left Column: Plan Details & Curated Highlights */}
+              <div className="lg:col-span-6 space-y-5 sm:space-y-6 text-left">
+                <div>
+                  <div className="flex items-center gap-2.5 mb-2">
+                    <span className="px-3 py-1 bg-warm-beige/70 text-warm-espresso font-paragraph text-[10px] sm:text-[11px] font-bold rounded-full uppercase tracking-wider">
+                      {currentPlan.type} LEVEL
+                    </span>
+                    <span className="text-[10px] sm:text-[11px] font-paragraph text-muted-gray/80 tracking-widest uppercase font-semibold">
+                      {levelMeta.refCode}
+                    </span>
+                  </div>
+
+                  <h3 className="font-heading text-2xl sm:text-3xl text-soft-charcoal font-bold leading-tight mb-2">
+                    {currentPlan.title}
+                  </h3>
+
+                  <p className="font-paragraph text-xs sm:text-sm text-muted-gray leading-relaxed">
+                    {levelMeta.summary}
+                  </p>
+                </div>
+
+                <div className="pt-1">
+                  <div className="flex items-center justify-between mb-3 border-b border-primary/10 pb-2">
+                    <span className="font-paragraph text-[11px] sm:text-xs font-bold text-primary uppercase tracking-[0.18em]">
+                      KEY HIGHLIGHTS
+                    </span>
+                    <span className="font-paragraph text-[11px] text-muted-gray font-semibold">
+                      6 Core Features
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2.5">
+                    {levelMeta.highlights.map((item, idx) => (
+                      <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm text-soft-charcoal font-paragraph">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                        <span className="leading-tight">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  <Button
+                    className="bg-primary text-white hover:bg-primary/90 rounded-xl px-6 py-3 font-paragraph font-semibold text-xs uppercase tracking-wider transition-all duration-300 shadow-md cursor-pointer"
+                    onClick={onOpenContactForm}
+                  >
+                    Enquire Floor Plan Details
+                  </Button>
+                </div>
+              </div>
+
+              {/* Right Column: Blueprint Preview */}
+              <div className="lg:col-span-6">
+                <div className="relative bg-[#dcd3c2]/30 rounded-2xl border border-primary/10 aspect-[4/3] flex items-center justify-center p-4 sm:p-6 overflow-hidden group shadow-inner">
+                  <Image
+                    src={currentPlan.imageUrl}
+                    alt={currentPlan.title}
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
+                  />
+                  
+                  {/* Blueprint View Button */}
+                  <div className="absolute inset-0 bg-black/15 group-hover:bg-black/25 transition-all flex items-center justify-center p-4">
+                    <button
+                      onClick={() => setActiveBlueprintModal(currentPlan)}
+                      className="bg-primary hover:bg-primary/90 text-white font-paragraph text-xs font-bold uppercase tracking-widest px-6 py-3.5 rounded-xl shadow-xl flex items-center gap-2 transform transition-all duration-300 hover:scale-105 cursor-pointer"
+                    >
+                      <ZoomIn className="w-4 h-4" />
+                      <span>VIEW BLUEPRINT</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CinematicReveal>
       </div>
+
+      {/* High-Resolution Blueprint Modal Lightbox */}
+      <AnimatePresence>
+        {activeBlueprintModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
+            onClick={() => setActiveBlueprintModal(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-2xl max-w-4xl w-full p-5 sm:p-7 shadow-2xl relative max-h-[90vh] flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-primary/10 pb-4 mb-4">
+                <div>
+                  <h3 className="font-heading text-xl sm:text-2xl font-bold text-soft-charcoal">
+                    {activeBlueprintModal.title}
+                  </h3>
+                  <span className="font-paragraph text-xs text-muted-gray uppercase tracking-wider">
+                    {activeBlueprintModal.type} Level • Architectural Blueprint
+                  </span>
+                </div>
+                <button
+                  onClick={() => setActiveBlueprintModal(null)}
+                  className="w-9 h-9 rounded-full bg-pale-sage/20 text-soft-charcoal hover:bg-pale-sage/40 flex items-center justify-center transition-colors cursor-pointer"
+                  aria-label="Close modal"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-auto bg-[#dcd3c2]/20 rounded-xl p-4 flex items-center justify-center min-h-[350px]">
+                <Image
+                  src={activeBlueprintModal.imageUrl}
+                  alt={activeBlueprintModal.title}
+                  className="max-h-[65vh] w-auto object-contain rounded-lg shadow-sm"
+                />
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4 pt-3 border-t border-primary/10">
+                <span className="font-paragraph text-xs text-muted-gray">
+                  Super Built-up Area: {activeBlueprintModal.area}
+                </span>
+                <Button
+                  className="bg-primary text-white hover:bg-primary/90 rounded-xl px-6 py-2.5 text-xs font-bold uppercase tracking-wider cursor-pointer w-full sm:w-auto"
+                  onClick={() => {
+                    setActiveBlueprintModal(null);
+                    onOpenContactForm();
+                  }}
+                >
+                  Request Full Blueprint & Pricing
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
@@ -351,12 +675,12 @@ const PlotConfigurationsSection = ({
           </CinematicReveal>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 md:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10">
           {plotConfigs.map((plot, i) => (
             <CinematicReveal key={plot._id || i} delay={i * 0.15}>
-              <div className="group relative bg-white border border-primary/10 rounded-2xl overflow-hidden hover:border-primary/40 transition-all duration-500 hover:shadow-xl flex flex-col justify-between h-full">
-                <div className="p-6 sm:p-8 md:p-10">
-                  <div className="flex justify-between items-start mb-6">
+              <div className="group relative bg-white border border-primary/10 rounded-2xl overflow-hidden hover:border-primary/40 transition-all duration-500 hover:shadow-xl flex flex-col justify-between h-full p-6 sm:p-7 md:p-8">
+                <div>
+                  <div className="flex justify-between items-start mb-4 sm:mb-5">
                     <div>
                       <span className="font-paragraph text-xs font-bold text-primary uppercase tracking-wider block mb-1">
                         {plot.dimensions || '3 BHK Layout'}
@@ -371,7 +695,7 @@ const PlotConfigurationsSection = ({
                   </div>
 
                   {plot.plotImage && (
-                    <div className="aspect-[4/3] bg-old-lace rounded-xl overflow-hidden mb-6 flex items-center justify-center p-4">
+                    <div className="aspect-[16/11] bg-old-lace/70 rounded-xl overflow-hidden mb-5 flex items-center justify-center p-2 sm:p-3">
                       <Image
                         src={plot.plotImage}
                         alt={plot.plotName || 'Floor plan'}
@@ -380,17 +704,19 @@ const PlotConfigurationsSection = ({
                     </div>
                   )}
 
-                  <p className="font-paragraph text-sm sm:text-base text-muted-gray leading-relaxed mb-6">
-                    {plot.description}
-                  </p>
+                  {plot.description && (
+                    <p className="font-paragraph text-sm sm:text-base text-muted-gray leading-relaxed mb-5">
+                      {plot.description}
+                    </p>
+                  )}
                 </div>
 
-                <div className="p-6 sm:p-8 pt-0">
+                <div className="pt-2">
                   <Button
                     className="w-full bg-primary text-white hover:bg-primary/90 rounded-xl py-3.5 font-paragraph font-semibold transition-all duration-300 cursor-pointer text-sm sm:text-base"
                     onClick={onOpenContactForm}
                   >
-                    Get Layout Blueprint & Pricing
+                    Get Floor Plans
                   </Button>
                 </div>
               </div>
@@ -398,6 +724,146 @@ const PlotConfigurationsSection = ({
           ))}
         </div>
       </div>
+    </section>
+  );
+};
+
+const galleryImages = [
+  { url: "/kitchen.jpg", title: "Modern Modular Kitchen" },
+  { url: "/ground3.jpg", title: "Grand Arrival & Landscaped Driveway" },
+  { url: "/pet-park.jpg", title: "Dedicated Pet Park & Green Buffer" },
+  { url: "/partyhall.jpg", title: "Double-Height Celebration Hall" },
+  { url: "/balcony.png", title: "Expansive Private Balconies" },
+  { url: "/building.png", title: "Boutique Architectural Elevation" },
+  { url: "/indoor-games.jpg", title: "Indoor Games & Leisure Zone" },
+  { url: "/cricpitch.jpg", title: "Cricket Practice Pitch" },
+  { url: "/roof5.jpg", title: "Rooftop Sky Living & Pool Deck" },
+  { url: "/building3.jpg", title: "Intimate Community Living" },
+];
+
+const GallerySection = ({ onOpenContactForm }: { onOpenContactForm: () => void }) => {
+  const [activeImage, setActiveImage] = useState<{ url: string; title: string } | null>(null);
+
+  return (
+    <section id="gallery" className="py-16 sm:py-24 md:py-32 bg-old-lace relative overflow-hidden scroll-mt-20">
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 mb-10 sm:mb-12">
+        <div className="text-center max-w-3xl mx-auto">
+          <CinematicReveal>
+            <span className="font-paragraph text-xs sm:text-sm uppercase tracking-[0.22em] text-primary block mb-2 sm:mb-3 font-semibold">
+              Gallery
+            </span>
+          </CinematicReveal>
+
+          <CinematicReveal delay={0.1}>
+            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-soft-charcoal font-bold leading-tight mb-3 sm:mb-4">
+              Curated Spaces
+            </h2>
+          </CinematicReveal>
+
+          <CinematicReveal delay={0.15}>
+            <div className="w-16 h-[2px] bg-primary mx-auto mb-4 sm:mb-5" />
+          </CinematicReveal>
+
+          <CinematicReveal delay={0.2}>
+            <p className="font-paragraph text-sm sm:text-base text-muted-gray leading-relaxed max-w-2xl mx-auto">
+              Experience the meticulously crafted interiors designed for uncompromised luxury.
+            </p>
+          </CinematicReveal>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes galleryMarquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-gallery-marquee {
+          display: flex;
+          width: max-content;
+          animation: galleryMarquee 40s linear infinite;
+        }
+        .animate-gallery-marquee:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
+
+      {/* Continuous Smooth Scroll Marquee Strip */}
+      <div className="w-full overflow-hidden relative py-2">
+        <div className="animate-gallery-marquee gap-5 sm:gap-6 md:gap-8 px-4">
+          {[...galleryImages, ...galleryImages].map((img, idx) => (
+            <div
+              key={idx}
+              onClick={() => setActiveImage(img)}
+              className="flex-shrink-0 w-[280px] sm:w-[340px] md:w-[390px] aspect-[4/3] rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 relative group bg-white border border-primary/10 cursor-pointer"
+            >
+              <Image
+                src={img.url}
+                alt={img.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4 sm:p-5">
+                <span className="text-white text-xs sm:text-sm font-paragraph font-medium tracking-wide">
+                  {img.title}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Lightbox Modal */}
+      <AnimatePresence>
+        {activeImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
+            onClick={() => setActiveImage(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-2xl max-w-4xl w-full p-4 sm:p-6 shadow-2xl relative max-h-[90vh] flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-primary/10 pb-3 mb-3">
+                <h3 className="font-heading text-lg sm:text-xl font-bold text-soft-charcoal">
+                  {activeImage.title}
+                </h3>
+                <button
+                  onClick={() => setActiveImage(null)}
+                  className="w-9 h-9 rounded-full bg-pale-sage/20 text-soft-charcoal hover:bg-pale-sage/40 flex items-center justify-center transition-colors cursor-pointer"
+                  aria-label="Close modal"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-hidden rounded-xl bg-old-lace flex items-center justify-center min-h-[350px]">
+                <Image
+                  src={activeImage.url}
+                  alt={activeImage.title}
+                  className="max-h-[65vh] w-auto object-contain rounded-lg"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 mt-4 pt-2 border-t border-primary/10">
+                <Button
+                  className="bg-primary text-white hover:bg-primary/90 rounded-xl px-6 py-2.5 text-xs font-bold uppercase tracking-wider cursor-pointer"
+                  onClick={() => {
+                    setActiveImage(null);
+                    onOpenContactForm();
+                  }}
+                >
+                  Schedule A Site Visit
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
@@ -477,217 +943,6 @@ const LocationSection = ({ onOpenContactForm }: { onOpenContactForm: () => void 
               className="w-full h-full"
             />
           </div>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const InvestmentSection = ({ 
-  investmentHighlights,
-  onOpenContactForm 
-}: { 
-  investmentHighlights: InvestmentHighlights[],
-  onOpenContactForm: () => void 
-}) => {
-  return (
-    <section className="py-16 sm:py-24 md:py-32 bg-old-lace">
-      <div className="container mx-auto px-4 sm:px-6 md:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 md:mb-20">
-          <CinematicReveal>
-            <span className="font-paragraph text-xs sm:text-sm uppercase tracking-[0.18em] text-primary block mb-3 font-semibold">
-              Investment Potential
-            </span>
-          </CinematicReveal>
-          <CinematicReveal delay={0.1}>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-soft-charcoal font-bold leading-tight">
-              A High-Yield Grade-A Asset
-            </h2>
-          </CinematicReveal>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {investmentHighlights.map((inv, idx) => (
-            <CinematicReveal key={inv._id || idx} delay={idx * 0.1}>
-              <div className="p-6 sm:p-8 bg-white rounded-2xl border border-primary/10 shadow-sm hover:shadow-xl hover:border-primary/30 transition-all duration-300 flex flex-col justify-between h-full">
-                <div>
-                  <span className="font-mono text-primary text-xs uppercase tracking-widest block mb-3 font-semibold">
-                    0{idx + 1}
-                  </span>
-                  <h3 className="font-heading text-lg sm:text-xl font-bold text-soft-charcoal mb-3 leading-snug">
-                    {inv.highlightTitle}
-                  </h3>
-                  <p className="font-paragraph text-xs sm:text-sm text-muted-gray leading-relaxed mb-4">
-                    {inv.highlightQuote}
-                  </p>
-                </div>
-                {inv.emphasizedPhrase && (
-                  <div className="pt-4 border-t border-primary/10 text-xs font-semibold text-primary font-paragraph">
-                    {inv.emphasizedPhrase}
-                  </div>
-                )}
-              </div>
-            </CinematicReveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const GatedLivingSection = ({ 
-  gatedBenefits,
-  onOpenContactForm 
-}: { 
-  gatedBenefits: GatedLivingBenefits[],
-  onOpenContactForm: () => void 
-}) => {
-  return (
-    <section className="py-16 sm:py-24 md:py-32 bg-warm-beige">
-      <div className="container mx-auto px-4 sm:px-6 md:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 md:mb-20">
-          <CinematicReveal>
-            <span className="font-paragraph text-xs sm:text-sm uppercase tracking-[0.18em] text-primary block mb-3 font-semibold">
-              Boutique Living
-            </span>
-          </CinematicReveal>
-          <CinematicReveal delay={0.1}>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-warm-espresso font-bold leading-tight">
-              Intimate Scale & Security
-            </h2>
-          </CinematicReveal>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {gatedBenefits.map((benefit, idx) => (
-            <CinematicReveal key={benefit._id || idx} delay={idx * 0.1}>
-              <div className="bg-white rounded-2xl overflow-hidden border border-primary/10 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between h-full">
-                {benefit.benefitVisual && (
-                  <div className="h-44 overflow-hidden">
-                    <Image
-                      src={benefit.benefitVisual}
-                      alt={benefit.benefitTitle || 'Gated living visual'}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                )}
-                <div className="p-6">
-                  <h3 className="font-heading text-lg font-bold text-soft-charcoal mb-2 leading-snug">
-                    {benefit.benefitTitle}
-                  </h3>
-                  <p className="font-paragraph text-xs sm:text-sm text-muted-gray leading-relaxed">
-                    {benefit.benefitDescription}
-                  </p>
-                </div>
-              </div>
-            </CinematicReveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const InfrastructureSection = ({ 
-  infrastructure,
-  onOpenContactForm 
-}: { 
-  infrastructure: InfrastructureDetails[],
-  onOpenContactForm: () => void 
-}) => {
-  return (
-    <section className="py-16 sm:py-24 md:py-32 bg-old-lace">
-      <div className="container mx-auto px-4 sm:px-6 md:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 md:mb-20">
-          <CinematicReveal>
-            <span className="font-paragraph text-xs sm:text-sm uppercase tracking-[0.18em] text-primary block mb-3 font-semibold">
-              Engineering & Specifications
-            </span>
-          </CinematicReveal>
-          <CinematicReveal delay={0.1}>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-soft-charcoal font-bold leading-tight">
-              Master Infrastructure
-            </h2>
-          </CinematicReveal>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {infrastructure.map((infra, idx) => (
-            <CinematicReveal key={infra._id || idx} delay={idx * 0.1}>
-              <div className="p-6 sm:p-8 bg-white rounded-2xl border border-primary/10 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between h-full">
-                {infra.featureIcon && (
-                  <div className="h-40 rounded-xl overflow-hidden mb-4 bg-old-lace">
-                    <Image
-                      src={infra.featureIcon}
-                      alt={infra.featureName || 'Infrastructure feature'}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                )}
-                <div>
-                  <h3 className="font-heading text-lg sm:text-xl font-bold text-soft-charcoal mb-2 leading-snug">
-                    {infra.featureName}
-                  </h3>
-                  <p className="font-paragraph text-xs sm:text-sm text-muted-gray leading-relaxed">
-                    {infra.featureDescription}
-                  </p>
-                </div>
-              </div>
-            </CinematicReveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const LegalSection = ({ 
-  legalApprovals,
-  onOpenContactForm 
-}: { 
-  legalApprovals: LegalApprovals[],
-  onOpenContactForm: () => void 
-}) => {
-  return (
-    <section className="py-16 sm:py-24 md:py-32 bg-warm-beige">
-      <div className="container mx-auto px-4 sm:px-6 md:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 md:mb-20">
-          <CinematicReveal>
-            <span className="font-paragraph text-xs sm:text-sm uppercase tracking-[0.18em] text-primary block mb-3 font-semibold">
-              RERA & Sanctions
-            </span>
-          </CinematicReveal>
-          <CinematicReveal delay={0.1}>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-warm-espresso font-bold leading-tight">
-              100% Verified Legal Approvals
-            </h2>
-          </CinematicReveal>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {legalApprovals.map((legal, idx) => (
-            <CinematicReveal key={legal._id || idx} delay={idx * 0.1}>
-              <div className="p-6 sm:p-8 bg-white rounded-2xl border border-primary/10 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between h-full">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="px-3 py-1 bg-pale-sage/40 text-warm-espresso rounded-full text-xs font-semibold flex items-center gap-1.5 font-paragraph">
-                      <Check className="h-3.5 w-3.5 text-primary" /> Verified
-                    </span>
-                    <Shield className="h-5 w-5 text-primary/40" />
-                  </div>
-                  <h3 className="font-heading text-lg font-bold text-soft-charcoal leading-snug">
-                    {legal.approvalName}
-                  </h3>
-                  <p className="font-paragraph text-xs sm:text-sm text-muted-gray leading-relaxed">
-                    {legal.description}
-                  </p>
-                </div>
-                <div className="pt-4 mt-4 border-t border-primary/10 text-xs font-semibold text-primary font-paragraph">
-                  {legal.issuingAuthority}
-                </div>
-              </div>
-            </CinematicReveal>
-          ))}
         </div>
       </div>
     </section>

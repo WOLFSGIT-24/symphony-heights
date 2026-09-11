@@ -359,15 +359,6 @@ const ProjectOverviewSection = ({ onOpenContactForm }: { onOpenContactForm: () =
                 Luxury isn't measured by overcrowded spaces. It's reflected in intelligent planning, privacy, and refined attention to detail for an exclusive community of just 128 families.
               </p>
             </CinematicReveal>
-
-            <CinematicReveal delay={0.4} className="pt-2">
-              <Button
-                className="bg-primary text-white hover:bg-primary/90 rounded-xl px-7 py-3.5 font-paragraph font-semibold text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-md cursor-pointer"
-                onClick={onOpenContactForm}
-              >
-                Enquire Now
-              </Button>
-            </CinematicReveal>
           </div>
 
           {/* Right Column: Image */}

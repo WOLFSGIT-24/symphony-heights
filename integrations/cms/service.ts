@@ -61,7 +61,7 @@ const initialData: Record<string, WixDataItem[]> = {
   plotconfigurations: [
     {
       _id: 'plan-1',
-      plotName: 'Premium 3 BHK Home (Type A)',
+      plotName: '3 BHK Home (Type A)',
       dimensions: '1818 SQ.FT. SBUA',
       areaSqFt: 1818,
       description: '',
@@ -70,7 +70,7 @@ const initialData: Record<string, WixDataItem[]> = {
     },
     {
       _id: 'plan-2',
-      plotName: 'Luxury 3 BHK Home (Type B)',
+      plotName: '3 BHK Home (Type B)',
       dimensions: '1857 SQ.FT. SBUA',
       areaSqFt: 1857,
       description: '',

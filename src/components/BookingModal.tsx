@@ -22,7 +22,7 @@ export default function BookingModal({
     phone: "",
     preferredDate: "",
     preferredTime: "11:00",
-    unitType: initialUnitType || "Luxury 3 BHK",
+    unitType: initialUnitType || "3 BHK",
     notes: "",
   });
 

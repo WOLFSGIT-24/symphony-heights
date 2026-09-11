@@ -334,28 +334,32 @@ const ProjectOverviewSection = ({ onOpenContactForm }: { onOpenContactForm: () =
       <div className="container mx-auto px-4 sm:px-6 md:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
           {/* Left Column: Paragraph & Overview */}
-          <div className="lg:col-span-6 space-y-5 sm:space-y-6 text-left">
+          <div className="lg:col-span-6 space-y-5 sm:space-y-6 text-center lg:text-left">
             <CinematicReveal>
-              <span className="font-paragraph text-xs sm:text-sm uppercase tracking-[0.2em] text-primary block font-semibold">
+              <span className="font-paragraph text-xs sm:text-sm uppercase tracking-[0.22em] text-primary block font-semibold mb-2">
                 The Intimate Scale
               </span>
             </CinematicReveal>
 
             <CinematicReveal delay={0.1}>
-              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-warm-espresso font-bold leading-[1.15]">
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-warm-espresso font-bold leading-[1.15] mb-3">
                 Boutique Living. <br className="hidden sm:inline" />
                 Thoughtfully Designed.
               </h2>
             </CinematicReveal>
 
+            <CinematicReveal delay={0.15}>
+              <div className="w-16 h-[2px] bg-primary mx-auto lg:mx-0 mb-4 sm:mb-5" />
+            </CinematicReveal>
+
             <CinematicReveal delay={0.2}>
-              <p className="font-paragraph text-sm sm:text-base md:text-lg text-warm-espresso/85 leading-relaxed">
+              <p className="font-paragraph text-sm sm:text-base md:text-lg text-warm-espresso/85 leading-relaxed text-center lg:text-left">
                 Introducing <strong className="font-bold text-primary">Symphony Heights</strong> by Disha Properties. A thoughtfully conceived boutique community in Hennur, North Bangalore, offering low density, three levels of lifestyle amenities, and exceptional capital appreciation.
               </p>
             </CinematicReveal>
 
             <CinematicReveal delay={0.3}>
-              <p className="font-paragraph text-sm sm:text-base text-warm-espresso/75 leading-relaxed">
+              <p className="font-paragraph text-sm sm:text-base text-warm-espresso/75 leading-relaxed text-center lg:text-left">
                 Luxury isn't measured by overcrowded spaces. It's reflected in intelligent planning, privacy, and refined attention to detail for an exclusive community of just 128 families.
               </p>
             </CinematicReveal>
@@ -380,50 +384,59 @@ const ProjectOverviewSection = ({ onOpenContactForm }: { onOpenContactForm: () =
 };
 
 const masterPlanDetails: Record<string, {
-  tagline: string;
-  summary: string;
-  refCode: string;
-  highlights: string[];
+  title: string;
+  tag: string;
+  highlightsCol1: string[];
+  highlightsCol2: string[];
 }> = {
   ground: {
-    tagline: "Arrival & Active Community",
-    summary: "Grand arrival plazas, lush landscaped recreation buffers, and dedicated parking infrastructure.",
-    refCode: "DWG-LVL-01 / GD",
-    highlights: [
-      "Grand Entrance & Waiting Plaza",
-      "Covered Seating Pavilion",
-      "Cricket Practice Pitch & Tot-Lot",
-      "Dedicated Pet Park & Skating Rink",
-      "Resident & Visitor Car Parking",
-      "24/7 Security Cabin & Drop-off Lobby"
-    ]
+    title: "Ground Level Plan",
+    tag: "GROUND",
+    highlightsCol1: [
+      "Security Cabin",
+      "Vendors Waiting/Parking",
+      "Feature Wall",
+      "Resident Car Parking",
+    ],
+    highlightsCol2: [
+      "Waiting Plaza (School Bus/Taxi)",
+      "Entrance Plaza",
+      "Seating Pavilion (Covered)",
+      "Visitor Car Parking",
+    ],
   },
   podium: {
-    tagline: "Clubhouse & Lifestyle Deck",
-    summary: "Three levels of curated indoor recreation, banquet spaces, wellness lawns, and social lounges.",
-    refCode: "DWG-LVL-02 / PD",
-    highlights: [
-      "Double Height Grand Party Hall",
-      "High-Performance Fitness Gym",
-      "Zen Yoga Deck with Pergola",
-      "Al Fresco Dining & BBQ Zone",
-      "WFH & Co-working Lounge",
-      "Elevated Scenic Walkway"
-    ]
+    title: "Podium Level Plan",
+    tag: "PODIUM",
+    highlightsCol1: [
+      "Lift Lobby/Reception",
+      "Pre-function Space",
+      "Spillover Party Deck/Party Lawn",
+      "Multi-purpose Deck",
+    ],
+    highlightsCol2: [
+      "Association Room",
+      "Double Height Party Hall",
+      "Indoor Games",
+      "Gym",
+    ],
   },
   rooftop: {
-    tagline: "Sky Amenities & Sunset Views",
-    summary: "Panoramic elevated leisure with infinity lap pool, sports courts, and stargazing decks.",
-    refCode: "DWG-LVL-03 / RF",
-    highlights: [
-      "Infinity Edge Sky Lap Pool",
-      "Futsal & Badminton Court",
-      "Sky Deck & Pool Loungers",
-      "Sunset Yoga & Meditation Lawn",
-      "Kids Splash Pool & Play Wall",
-      "Spa & Private Cabana Seating"
-    ]
-  }
+    title: "Rooftop Level Plan",
+    tag: "ROOFTOP",
+    highlightsCol1: [
+      "Covered Walkway",
+      "Double Heighted Badminton Court",
+      "Seating",
+      "Changing Room/Spa",
+    ],
+    highlightsCol2: [
+      "Futsal Court",
+      "Kids Play Area",
+      "Play Wall",
+      "Main Pool",
+    ],
+  },
 };
 
 const MasterPlanSection = ({ onOpenContactForm }: { onOpenContactForm: () => void }) => {
@@ -495,47 +508,50 @@ const MasterPlanSection = ({ onOpenContactForm }: { onOpenContactForm: () => voi
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               
               {/* Left Column: Plan Details & Curated Highlights */}
-              <div className="lg:col-span-6 space-y-5 sm:space-y-6 text-left">
+              <div className="lg:col-span-6 space-y-5 text-left">
                 <div>
-                  <div className="flex items-center gap-2.5 mb-2">
-                    <span className="px-3 py-1 bg-warm-beige/70 text-warm-espresso font-paragraph text-[10px] sm:text-[11px] font-bold rounded-full uppercase tracking-wider">
-                      {currentPlan.type} LEVEL
-                    </span>
-                    <span className="text-[10px] sm:text-[11px] font-paragraph text-muted-gray/80 tracking-widest uppercase font-semibold">
-                      {levelMeta.refCode}
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <h3 className="font-heading text-2xl sm:text-3xl lg:text-4xl text-soft-charcoal font-bold leading-tight">
+                      {levelMeta.title}
+                    </h3>
+                    <span className="px-3.5 py-1 bg-[#e6ddcf] text-soft-charcoal font-paragraph text-[11px] font-bold rounded-full uppercase tracking-wider shrink-0">
+                      {levelMeta.tag}
                     </span>
                   </div>
 
-                  <h3 className="font-heading text-2xl sm:text-3xl text-soft-charcoal font-bold leading-tight mb-2">
-                    {currentPlan.title}
-                  </h3>
-
-                  <p className="font-paragraph text-xs sm:text-sm text-muted-gray leading-relaxed">
-                    {levelMeta.summary}
-                  </p>
+                  <div className="font-paragraph text-[11px] sm:text-xs font-bold text-primary uppercase tracking-[0.16em] mb-4 sm:mb-6">
+                    SUPER BUILT-UP AREA: AMENITIES
+                  </div>
                 </div>
 
                 <div className="pt-1">
-                  <div className="flex items-center justify-between mb-3 border-b border-primary/10 pb-2">
-                    <span className="font-paragraph text-[11px] sm:text-xs font-bold text-primary uppercase tracking-[0.18em]">
-                      KEY HIGHLIGHTS
-                    </span>
-                    <span className="font-paragraph text-[11px] text-muted-gray font-semibold">
-                      6 Core Features
-                    </span>
-                  </div>
+                  <span className="font-paragraph text-xs font-bold text-soft-charcoal/80 uppercase tracking-[0.16em] block mb-4">
+                    LAYOUT HIGHLIGHTS:
+                  </span>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2.5">
-                    {levelMeta.highlights.map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm text-soft-charcoal font-paragraph">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                        <span className="leading-tight">{item}</span>
-                      </div>
-                    ))}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3.5">
+                    {/* Column 1 */}
+                    <div className="space-y-3.5">
+                      {levelMeta.highlightsCol1.map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-2.5 text-xs sm:text-sm text-soft-charcoal/90 font-paragraph">
+                          <span className="w-2 h-2 rounded-full bg-[#9fb5c8] shrink-0" />
+                          <span className="leading-snug">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                    {/* Column 2 */}
+                    <div className="space-y-3.5">
+                      {levelMeta.highlightsCol2.map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-2.5 text-xs sm:text-sm text-soft-charcoal/90 font-paragraph">
+                          <span className="w-2 h-2 rounded-full bg-[#9fb5c8] shrink-0" />
+                          <span className="leading-snug">{item}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                   <Button
                     className="bg-primary text-white hover:bg-primary/90 rounded-xl px-6 py-3 font-paragraph font-semibold text-xs uppercase tracking-wider transition-all duration-300 shadow-md cursor-pointer"
                     onClick={onOpenContactForm}
@@ -646,21 +662,22 @@ const PlotConfigurationsSection = ({
   return (
     <section id="plots" className="py-16 sm:py-24 md:py-32 bg-old-lace">
       <div className="container mx-auto px-4 sm:px-6 md:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 md:mb-20">
-          <div>
-            <CinematicReveal>
-              <span className="font-paragraph text-xs sm:text-sm uppercase tracking-[0.18em] text-primary block mb-2 sm:mb-3 font-semibold">
-                Configurations
-              </span>
-            </CinematicReveal>
-            <CinematicReveal delay={0.1}>
-              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-soft-charcoal font-bold leading-tight">
-                Curated 3 BHK Residences
-              </h2>
-            </CinematicReveal>
-          </div>
-          <CinematicReveal delay={0.2} className="mt-4 md:mt-0">
-            <p className="font-paragraph text-sm sm:text-base text-muted-gray max-w-md leading-relaxed">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+          <CinematicReveal>
+            <span className="font-paragraph text-xs sm:text-sm uppercase tracking-[0.22em] text-primary block mb-2 sm:mb-3 font-semibold">
+              Configurations
+            </span>
+          </CinematicReveal>
+          <CinematicReveal delay={0.1}>
+            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-soft-charcoal font-bold leading-tight mb-3 sm:mb-4">
+              Curated 3 BHK Residences
+            </h2>
+          </CinematicReveal>
+          <CinematicReveal delay={0.15}>
+            <div className="w-16 h-[2px] bg-primary mx-auto mb-4 sm:mb-5" />
+          </CinematicReveal>
+          <CinematicReveal delay={0.2}>
+            <p className="font-paragraph text-sm sm:text-base text-muted-gray leading-relaxed max-w-2xl mx-auto">
               Meticulously planned layouts with expansive living rooms, private balconies, and zero space wastage.
             </p>
           </CinematicReveal>
@@ -671,18 +688,13 @@ const PlotConfigurationsSection = ({
             <CinematicReveal key={plot._id || i} delay={i * 0.15}>
               <div className="group relative bg-white border border-primary/10 rounded-2xl overflow-hidden hover:border-primary/40 transition-all duration-500 hover:shadow-xl flex flex-col justify-between h-full p-6 sm:p-7 md:p-8">
                 <div>
-                  <div className="flex justify-between items-start mb-4 sm:mb-5">
-                    <div>
-                      <span className="font-paragraph text-xs font-bold text-primary uppercase tracking-wider block mb-1">
-                        {plot.dimensions || '3 BHK Layout'}
-                      </span>
-                      <h3 className="font-heading text-2xl sm:text-3xl text-soft-charcoal font-bold leading-tight">
-                        {plot.plotName}
-                      </h3>
-                    </div>
-                    <span className="px-3 py-1 bg-pale-sage/30 text-warm-espresso font-paragraph text-xs font-semibold rounded-full uppercase tracking-wider">
-                      {plot.availabilityStatus || 'Available'}
+                  <div className="mb-4 sm:mb-5">
+                    <span className="font-paragraph text-xs font-bold text-primary uppercase tracking-wider block mb-1">
+                      {plot.dimensions || '3 BHK Layout'}
                     </span>
+                    <h3 className="font-heading text-2xl sm:text-3xl text-soft-charcoal font-bold leading-tight">
+                      {plot.plotName}
+                    </h3>
                   </div>
 
                   {plot.plotImage && (
@@ -865,21 +877,25 @@ const LocationSection = ({ onOpenContactForm }: { onOpenContactForm: () => void 
       <div className="container mx-auto px-4 sm:px-6 md:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Column: Details */}
-          <div className="lg:col-span-5 space-y-6">
+          <div className="lg:col-span-5 space-y-6 text-center lg:text-left">
             <CinematicReveal>
-              <span className="font-paragraph text-xs sm:text-sm uppercase tracking-[0.18em] text-primary block font-semibold">
+              <span className="font-paragraph text-xs sm:text-sm uppercase tracking-[0.22em] text-primary block font-semibold mb-2">
                 Connectivity & Growth
               </span>
             </CinematicReveal>
 
             <CinematicReveal delay={0.1}>
-              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-warm-espresso font-bold leading-tight">
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-warm-espresso font-bold leading-tight mb-3">
                 Strategic Hennur Corridor
               </h2>
             </CinematicReveal>
 
+            <CinematicReveal delay={0.15}>
+              <div className="w-16 h-[2px] bg-primary mx-auto lg:mx-0 mb-4 sm:mb-5" />
+            </CinematicReveal>
+
             <CinematicReveal delay={0.2}>
-              <p className="font-paragraph text-sm sm:text-base md:text-lg text-warm-espresso/85 leading-relaxed">
+              <p className="font-paragraph text-sm sm:text-base md:text-lg text-warm-espresso/85 leading-relaxed text-center lg:text-left">
                 Located in the rapid-growth corridor of Hennur, North Bangalore, Symphony Heights offers the perfect equilibrium between tech park connectivity and natural serenity.
               </p>
             </CinematicReveal>

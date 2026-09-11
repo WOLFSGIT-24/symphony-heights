@@ -226,8 +226,6 @@ const MobileSlider: React.FC<{ amenities: ProjectAmenities[] }> = ({ amenities }
                 </span>
               </div>
             )}
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-old-lace via-transparent to-transparent" />
           </div>
         </motion.div>
       </div>
@@ -314,14 +312,14 @@ const Amenities3DSection: React.FC<{ amenities: ProjectAmenities[] }> = ({ ameni
   return (
     <section ref={sectionRef} id="amenities" className="py-20 md:py-28 bg-foreground/5">
       <div className="container mx-auto px-4 md:px-8">
-        <motion.div style={{ opacity: headerOpacity, y: headerY }} className="mb-14 md:mb-20">
-          <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl text-foreground font-bold leading-tight mb-3">
+        <motion.div style={{ opacity: headerOpacity, y: headerY }} className="text-center md:text-left mb-12 sm:mb-16 md:mb-20">
+          <span className="font-paragraph text-xs sm:text-sm uppercase tracking-[0.22em] text-primary block mb-2 sm:mb-3 font-semibold">
+            World-Class Amenities
+          </span>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-foreground font-bold leading-tight mb-3">
             The Collection
           </h2>
-          <p className="font-paragraph text-primary uppercase tracking-[0.18em] text-xs md:text-sm font-semibold">
-            World-Class Amenities
-          </p>
-          <motion.div className="h-1 bg-primary mt-5" style={{ width: dividerWidth }} />
+          <div className="w-16 h-[2px] bg-primary mx-auto md:mx-0 mt-4 mb-2" />
         </motion.div>
 
         {/* Mobile Slider */}

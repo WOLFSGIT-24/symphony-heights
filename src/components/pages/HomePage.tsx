@@ -1142,13 +1142,8 @@ const FinalCTASection = ({ onOpenContactForm }: { onOpenContactForm: () => void 
 
           <CinematicReveal delay={0.1}>
             <h2 className="font-heading text-2xl sm:text-4xl md:text-5xl text-soft-charcoal font-bold leading-tight tracking-tight">
-              <span className="block sm:inline">Begin Your </span>
-              <span className="block sm:inline">Journey to </span>
-              <br className="hidden sm:block" />
-              <span className="text-primary italic">
-                <span className="block sm:inline">Uncompromised </span>
-                <span className="block sm:inline">Living</span>
-              </span>
+              <span className="block">Begin Your Journey to</span>
+              <span className="block text-primary">Uncompromised Living</span>
             </h2>
           </CinematicReveal>
 

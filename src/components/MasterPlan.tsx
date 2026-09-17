@@ -16,11 +16,8 @@ export default function MasterPlan({ onSelectUnit }: MasterPlanProps) {
     <section id="master-plan" className="w-full py-12 md:py-16 bg-[#FBF9FB] scroll-mt-20 font-body">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="text-center max-w-2xl mx-auto mb-12 space-y-4">
-          <span className="font-body text-xs font-bold text-navy-primary uppercase tracking-[0.25em] block">
-            Master Plan
-          </span>
           <h2 className="font-display text-3xl sm:text-4xl text-navy-primary font-semibold leading-tight">
-            Architectural Drafting
+            Master Plan
           </h2>
           <div className="h-[2px] w-16 bg-navy-primary mx-auto" />
           <p className="font-body text-sm md:text-base text-gray-text leading-relaxed">

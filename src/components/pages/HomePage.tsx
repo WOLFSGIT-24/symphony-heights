@@ -71,8 +71,29 @@ const defaultAmenities: ProjectAmenities[] = [
   },
 ];
 
+const defaultPlotConfigs: PlotConfigurations[] = [
+  {
+    _id: 'plan-1',
+    plotName: '3 BHK Home',
+    dimensions: '1818 SQ.FT. SBUA',
+    areaSqFt: 1818,
+    description: '',
+    availabilityStatus: 'Available',
+    plotImage: '/unit-402.webp',
+  },
+  {
+    _id: 'plan-2',
+    plotName: '3 BHK Home',
+    dimensions: '1857 SQ.FT. SBUA',
+    areaSqFt: 1857,
+    description: '',
+    availabilityStatus: 'Available',
+    plotImage: '/unit-1503.webp',
+  },
+];
+
 export default function HomePage() {
-  const [plotConfigs, setPlotConfigs] = useState<PlotConfigurations[]>([]);
+  const [plotConfigs, setPlotConfigs] = useState<PlotConfigurations[]>(defaultPlotConfigs);
   const [amenities, setAmenities] = useState<ProjectAmenities[]>(defaultAmenities);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
@@ -206,10 +227,10 @@ const HeroSection = ({ onOpenContactForm }: { onOpenContactForm: () => void }) =
             {/* White Property Card */}
             <div className="w-full bg-white rounded-2xl p-4 sm:p-5 shadow-[0_4px_20px_rgba(0,0,0,0.06)] border border-neutral-100 flex items-center justify-between">
               <div className="space-y-1">
-                <div className="text-[10px] sm:text-[11px] font-bold text-soft-charcoal/60 uppercase tracking-wider font-paragraph">
+                <div className="text-xs sm:text-sm font-extrabold text-soft-charcoal/85 uppercase tracking-wider font-paragraph">
                   PREMIUM 3 BHK HOMES
                 </div>
-                <div className="text-base sm:text-lg font-heading font-extrabold text-soft-charcoal tracking-tight leading-none">
+                <div className="text-lg sm:text-xl font-heading font-extrabold text-soft-charcoal tracking-tight leading-none">
                   STARTING ₹ 1.9 CR*
                 </div>
               </div>
@@ -475,22 +496,16 @@ const MasterPlanSection = ({ onOpenContactForm }: { onOpenContactForm: () => voi
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
           <CinematicReveal>
-            <span className="font-paragraph text-xs sm:text-sm uppercase tracking-[0.22em] text-primary block mb-2 sm:mb-3 font-semibold">
-              Master Plan
-            </span>
-          </CinematicReveal>
-
-          <CinematicReveal delay={0.1}>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-soft-charcoal font-bold leading-tight mb-3 sm:mb-4">
-              Architectural Drafting
+              Master Plan
             </h2>
           </CinematicReveal>
 
-          <CinematicReveal delay={0.15}>
+          <CinematicReveal delay={0.1}>
             <div className="w-16 h-[2px] bg-primary mx-auto mb-4 sm:mb-5" />
           </CinematicReveal>
 
-          <CinematicReveal delay={0.2}>
+          <CinematicReveal delay={0.15}>
             <p className="font-paragraph text-sm sm:text-base text-muted-gray leading-relaxed max-w-2xl mx-auto">
               Meticulously designed floor plans that optimize usable space, facilitate natural breeze channels, and welcome beautiful morning sunlight.
             </p>
@@ -712,10 +727,10 @@ const PlotConfigurationsSection = ({
               <div className="group relative bg-white border border-primary/10 rounded-2xl overflow-hidden hover:border-primary/40 transition-all duration-500 hover:shadow-xl flex flex-col justify-between h-full p-6 sm:p-7 md:p-8">
                 <div>
                   <div className="mb-4 sm:mb-5">
-                    <span className="font-paragraph text-xs font-bold text-primary uppercase tracking-wider block mb-1">
+                    <span className="font-paragraph text-sm sm:text-base font-extrabold text-primary uppercase tracking-wider block mb-1.5">
                       {plot.dimensions || '3 BHK Layout'}
                     </span>
-                    <h3 className="font-heading text-2xl sm:text-3xl text-soft-charcoal font-bold leading-tight">
+                    <h3 className="font-heading text-3xl sm:text-4xl text-soft-charcoal font-extrabold leading-tight">
                       {plot.plotName}
                     </h3>
                   </div>
@@ -991,9 +1006,14 @@ const FinalCTASection = ({ onOpenContactForm }: { onOpenContactForm: () => void 
           </CinematicReveal>
 
           <CinematicReveal delay={0.1}>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-soft-charcoal font-bold leading-tight">
-              Begin Your Journey to <br />
-              <span className="text-primary italic">Uncompromised Living</span>
+            <h2 className="font-heading text-2xl sm:text-4xl md:text-5xl text-soft-charcoal font-bold leading-tight tracking-tight">
+              <span className="block sm:inline">Begin Your </span>
+              <span className="block sm:inline">Journey to </span>
+              <br className="hidden sm:block" />
+              <span className="text-primary italic">
+                <span className="block sm:inline">Uncompromised </span>
+                <span className="block sm:inline">Living</span>
+              </span>
             </h2>
           </CinematicReveal>
 
@@ -1003,7 +1023,7 @@ const FinalCTASection = ({ onOpenContactForm }: { onOpenContactForm: () => void 
             </p>
           </CinematicReveal>
 
-          <CinematicReveal delay={0.3} className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          <CinematicReveal delay={0.3} className="flex justify-center pt-4">
             <Button
               size="lg"
               className="bg-primary text-white hover:bg-primary/90 px-8 py-3.5 rounded-xl text-base font-paragraph font-semibold transition-all duration-300 w-full sm:w-auto cursor-pointer shadow-md"
@@ -1011,14 +1031,6 @@ const FinalCTASection = ({ onOpenContactForm }: { onOpenContactForm: () => void 
             >
               Book Private Site Visit
             </Button>
-
-            <a
-              href={`tel:${projectSnapshot.phone.replace(/\s+/g, '')}`}
-              className="border-2 border-primary text-primary hover:bg-primary hover:text-white px-8 py-3.5 rounded-xl text-base font-paragraph font-semibold transition-all duration-300 flex items-center justify-center gap-2 w-full sm:w-auto"
-            >
-              <Phone className="h-4 w-4" />
-              Call {projectSnapshot.phone}
-            </a>
           </CinematicReveal>
         </div>
       </div>

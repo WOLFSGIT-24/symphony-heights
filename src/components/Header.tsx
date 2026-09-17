@@ -88,7 +88,7 @@ export default function Header({ onOpenContactForm }: HeaderProps) {
           </nav>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 md:gap-4 shrink-0">
             {/* Desktop Only Enquire Button */}
             <Button
               className="hidden md:flex font-paragraph font-semibold tracking-wide transition-all duration-300
@@ -99,22 +99,31 @@ export default function Header({ onOpenContactForm }: HeaderProps) {
               Enquire Now
             </Button>
 
+            {/* Mobile Only: Compact Enquiry Button */}
+            <button
+              onClick={onOpenContactForm}
+              className="md:hidden h-9 px-3 bg-[#4E3D35] hover:bg-[#3f3029] active:scale-95 text-white font-paragraph font-bold text-[10.5px] uppercase tracking-wider rounded-full shadow-xs flex items-center justify-center transition-all cursor-pointer whitespace-nowrap"
+              aria-label="Enquire Now"
+            >
+              Enquire
+            </button>
+
             {/* Mobile Only: Circular Phone Call Button */}
             <a
               href={`tel:${projectSnapshot.phone.replace(/\s+/g, "")}`}
-              className="md:hidden w-10 h-10 rounded-full border border-[#4E3D35]/25 bg-white/60 backdrop-blur-xs flex items-center justify-center text-[#4E3D35] hover:bg-[#4E3D35]/5 active:scale-95 transition-all shadow-xs"
+              className="md:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-[#4E3D35]/25 bg-white/70 backdrop-blur-xs flex items-center justify-center text-[#4E3D35] hover:bg-[#4E3D35]/5 active:scale-95 transition-all shadow-xs shrink-0"
               aria-label={`Call ${projectSnapshot.phone}`}
             >
-              <Phone className="w-4 h-4 text-[#4E3D35]" />
+              <Phone className="w-3.5 h-3.5 text-[#4E3D35]" />
             </a>
 
             {/* Mobile Only: Circular Menu Toggle Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden w-10 h-10 rounded-full border border-[#4E3D35]/25 bg-white/60 backdrop-blur-xs flex items-center justify-center text-[#4E3D35] hover:bg-[#4E3D35]/5 active:scale-95 transition-all shadow-xs cursor-pointer"
+              className="md:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-[#4E3D35]/25 bg-white/70 backdrop-blur-xs flex items-center justify-center text-[#4E3D35] hover:bg-[#4E3D35]/5 active:scale-95 transition-all shadow-xs cursor-pointer shrink-0"
               aria-label="Toggle menu"
             >
-              {isMenuOpen ? <X className="w-4 h-4 text-[#4E3D35]" /> : <Menu className="w-4 h-4 text-[#4E3D35]" />}
+              {isMenuOpen ? <X className="w-3.5 h-3.5 text-[#4E3D35]" /> : <Menu className="w-3.5 h-3.5 text-[#4E3D35]" />}
             </button>
           </div>
         </div>

@@ -41,7 +41,7 @@ export default function ProjectHighlights({ onRequestDownload }: ProjectHighligh
                 <span className="font-body text-[10px] sm:text-xs font-bold tracking-widest text-navy-primary/60 uppercase mb-4">
                   Launching
                 </span>
-                <img src="/logo.png" alt="Symphony Heights" className="h-24 sm:h-28 object-contain mb-4" />
+                <img src="/logo.webp" alt="Symphony Heights" className="h-24 sm:h-28 object-contain mb-4" loading="lazy" decoding="async" />
                 <span className="font-body text-[10px] font-bold tracking-widest text-navy-primary uppercase">
                   Hennur, North Bangalore
                 </span>
@@ -81,7 +81,7 @@ export default function ProjectHighlights({ onRequestDownload }: ProjectHighligh
                 <span className="font-body text-[10px] sm:text-xs font-bold tracking-widest text-navy-primary/60 uppercase mb-4">
                   Experience
                 </span>
-                <img src="/logo.png" alt="Symphony Heights" className="h-24 sm:h-28 object-contain mb-4" />
+                <img src="/logo.webp" alt="Symphony Heights" className="h-24 sm:h-28 object-contain mb-4" loading="lazy" decoding="async" />
                 <span className="font-body text-[10px] font-bold tracking-widest text-navy-primary uppercase">
                   Hennur, North Bangalore
                 </span>

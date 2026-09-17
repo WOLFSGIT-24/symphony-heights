@@ -14,7 +14,7 @@ export function getStaticPaths() {
 const title = "Symphony Heights | Boutique 3 BHK Residences in Hennur, Bangalore";
 const description = "Introducing Symphony Heights by Disha Properties — a boutique community of 128 premium 3 BHK residences in Hennur, North Bangalore. Starting ₹1.9 Cr with exclusive 25:25:25:25 Flexi Payment Plan. RERA Approved.";
 const siteUrl = Astro.url.href;
-const ogImage = "/hero-bg.png";
+const ogImage = "/hero-bg.webp";
 ---
 
 <!doctype html>
@@ -37,9 +37,11 @@ const ogImage = "/hero-bg.png";
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content={siteUrl} />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={ogImage} />
+    <!-- Preload Hero LCP Resource for Mobile & Desktop -->
+    <link rel="preload" as="image" href="/hero-bg-mobile.webp" media="(max-width: 1023px)" fetchpriority="high" type="image/webp" />
+    <link rel="preload" as="image" href="/hero-bg.webp" media="(min-width: 1024px)" fetchpriority="high" type="image/webp" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <Head />
   </head>

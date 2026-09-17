@@ -16,12 +16,17 @@ export default function Hero({ onOpenEnquiry, onRequestDownload }: HeroProps) {
         {/* Left Side: Primary Image */}
         <div className="w-full lg:w-1/2 relative mb-4 lg:mb-0">
           <div className="relative shadow-2xl bg-white p-2 sm:p-3 z-10 rounded-sm">
-            <img
-              src="/hero-bg.png"
-              alt="Symphony Heights tower"
-              fetchPriority="high"
-              className="w-full h-[52vh] sm:h-auto sm:aspect-[4/5] object-cover object-bottom rounded-sm"
-            />
+            <picture>
+              <source media="(max-width: 1023px)" srcSet="/hero-bg-mobile.webp" type="image/webp" />
+              <img
+                src="/hero-bg.webp"
+                alt="Symphony Heights tower"
+                fetchPriority="high"
+                loading="eager"
+                decoding="async"
+                className="w-full h-[52vh] sm:h-auto sm:aspect-[4/5] object-cover object-bottom rounded-sm"
+              />
+            </picture>
             {/* Pricing Box (Mobile overlay) */}
             <div className="lg:hidden absolute -bottom-7 left-1/2 -translate-x-1/2 w-[86%] max-w-[320px] bg-[#4E3D35] text-white py-3.5 px-4 shadow-xl z-20 rounded-xl border border-white/10 text-center">
               <div className="font-paragraph text-[10.5px] font-bold tracking-[0.2em] text-[#d8c8bd] uppercase">
@@ -64,7 +69,7 @@ export default function Hero({ onOpenEnquiry, onRequestDownload }: HeroProps) {
             </button>
             <button
               onClick={onRequestDownload || onOpenEnquiry}
-              className="w-full bg-transparent border-[1.5px] border-[#4E3D35] text-[#4E3D35] hover:bg-[#4E3D35]/5 py-4 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 active:scale-[0.99] transition-all cursor-pointer"
+              className="w-full bg-white border-[1.5px] border-[#4E3D35] text-[#4E3D35] hover:bg-[#4E3D35]/5 py-4 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-sm active:scale-[0.99] transition-all cursor-pointer"
             >
               <Download className="w-4 h-4" />
               <span>BROCHURE</span>

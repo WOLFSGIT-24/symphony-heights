@@ -1,15 +1,15 @@
 import React from "react";
 
 const images = [
-  "/cricpitch.jpg",
-  "/indoor-games.jpg",
-  "/kitchen.jpg",
-  "/kidsplay.jpg",
-  "/pet-park.jpg",
-  "/partyhall.jpg",
-  "/balcony.png",
-  "/building.png",
-  "/roof5.jpg"
+  "/cricpitch.webp",
+  "/indoor-games.webp",
+  "/kitchen.webp",
+  "/kidsplay.webp",
+  "/pet-park.webp",
+  "/partyhall.webp",
+  "/balcony.webp",
+  "/building.webp",
+  "/roof5.webp"
 ];
 
 export default function Gallery() {

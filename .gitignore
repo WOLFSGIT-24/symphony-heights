@@ -41,3 +41,8 @@ docs/*
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# AI & IDE tooling
+.emdash/
+.agents/
+.gemini/

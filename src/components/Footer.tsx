@@ -38,9 +38,11 @@ export default function Footer({ onOpenPrivacy, onOpenTerms, onOpenContactForm }
           transition={{ duration: 1, delay: 0.2, ease: 'easeOut' }}
         >
           <img
-            src="/combo-logo.png"
+            src="/combo-logo.webp"
             alt="Symphony Heights by Disha Properties Logo"
             className="mx-auto mb-2 sm:mb-3 drop-shadow-[0_0_15px_rgba(88,66,54,0.3)] w-auto h-12 sm:h-14 md:h-16 object-contain"
+            loading="lazy"
+            decoding="async"
           />
         </motion.div>
 

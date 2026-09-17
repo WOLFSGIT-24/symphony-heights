@@ -173,6 +173,11 @@ const MobileSlider: React.FC<{ amenities: ProjectAmenities[] }> = ({ amenities }
     }),
   };
 
+  // Guard against empty amenities
+  if (!amenities || amenities.length === 0) {
+    return null;
+  }
+
   const handleNext = () => {
     setDirection(1);
     setCurrentIndex((prev) => (prev + 1) % amenities.length);
@@ -185,15 +190,17 @@ const MobileSlider: React.FC<{ amenities: ProjectAmenities[] }> = ({ amenities }
 
   // Auto-advance every 5 seconds
   useEffect(() => {
+    if (!amenities || amenities.length === 0) return;
     const timer = setInterval(() => {
       setDirection(1);
       setCurrentIndex((prev) => (prev + 1) % amenities.length);
     }, 5000);
 
     return () => clearInterval(timer);
-  }, [amenities.length]);
+  }, [amenities?.length]);
 
-  const currentAmenity = amenities[currentIndex];
+  const currentAmenity = amenities[currentIndex] || amenities[0];
+  if (!currentAmenity) return null;
 
   return (
     <div className="md:hidden relative">
@@ -213,16 +220,16 @@ const MobileSlider: React.FC<{ amenities: ProjectAmenities[] }> = ({ amenities }
           className="absolute inset-0"
         >
           <div className="relative w-full h-full rounded-2xl overflow-hidden">
-            {currentAmenity.galleryImage ? (
+            {currentAmenity?.galleryImage ? (
               <Image
                 src={currentAmenity.galleryImage}
-                alt={currentAmenity.amenityName}
+                alt={currentAmenity.amenityName || 'Amenity'}
                 className="w-full h-full object-cover"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-warm-beige to-pale-sage flex items-center justify-center">
                 <span className="font-heading text-2xl text-soft-charcoal/40 text-center px-4">
-                  {currentAmenity.amenityName}
+                  {currentAmenity?.amenityName || 'Amenity'}
                 </span>
               </div>
             )}
@@ -239,7 +246,7 @@ const MobileSlider: React.FC<{ amenities: ProjectAmenities[] }> = ({ amenities }
         className="mb-6 text-center"
       >
         <h3 className="font-heading text-2xl text-soft-charcoal">
-          {currentAmenity.amenityName}
+          {currentAmenity?.amenityName}
         </h3>
       </motion.div>
 

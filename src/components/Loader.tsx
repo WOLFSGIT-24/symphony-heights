@@ -31,7 +31,7 @@ export default function Loader() {
         transition={{ duration: 0.8, ease: 'easeOut' }}
       >
         <img
-          src="/combo-logo.png"
+          src="/combo-logo.webp"
           alt="Symphony Heights by Disha Properties"
           className="h-16 sm:h-20 w-auto object-contain drop-shadow-md"
         />

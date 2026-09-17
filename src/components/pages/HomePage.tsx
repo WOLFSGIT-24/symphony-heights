@@ -44,11 +44,37 @@ const SectionDivider = () => (
 
 // --- Main Component ---
 
+const defaultAmenities: ProjectAmenities[] = [
+  {
+    _id: 'amenity-1',
+    amenityName: 'Ground Level',
+    description: '',
+    galleryImage: '/ground2.webp',
+    category: 'Ground Level',
+    displayOrder: 1,
+  },
+  {
+    _id: 'amenity-2',
+    amenityName: 'Podium Level',
+    description: '',
+    galleryImage: '/podium2.webp',
+    category: 'Podium Level',
+    displayOrder: 2,
+  },
+  {
+    _id: 'amenity-3',
+    amenityName: 'Rooftop Level',
+    description: '',
+    galleryImage: '/roof5.webp',
+    category: 'Rooftop Level',
+    displayOrder: 3,
+  },
+];
+
 export default function HomePage() {
   const [plotConfigs, setPlotConfigs] = useState<PlotConfigurations[]>([]);
-  const [amenities, setAmenities] = useState<ProjectAmenities[]>([]);
+  const [amenities, setAmenities] = useState<ProjectAmenities[]>(defaultAmenities);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-  const [showLoader, setShowLoader] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,86 +84,70 @@ export default function HomePage() {
           BaseCrudService.getAll<ProjectAmenities>('projectamenities'),
         ]);
 
-        setPlotConfigs(plots.items.sort((a, b) => (a.areaSqFt || 0) - (b.areaSqFt || 0)));
-        setAmenities(amen.items.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0)));
+        if (plots?.items?.length) {
+          setPlotConfigs(plots.items.sort((a, b) => (a.areaSqFt || 0) - (b.areaSqFt || 0)));
+        }
+        if (amen?.items?.length) {
+          setAmenities(amen.items.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0)));
+        }
       } catch (error) {
         console.error("Failed to fetch data", error);
-      } finally {
-        setTimeout(() => {
-          setShowLoader(false);
-        }, 2200);
       }
     };
 
     fetchData();
   }, []);
 
-  // Auto-open contact form after 7 seconds
+  // Auto-open contact form after 10 seconds (non-intrusive)
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsContactModalOpen(true);
-    }, 7000);
+    }, 10000);
 
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <div className="bg-old-lace text-soft-charcoal min-h-screen overflow-x-hidden selection:bg-primary/20 selection:text-primary">
-      {showLoader && <Loader />}
-      
-      <AnimatePresence>
-        {!showLoader && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            className="w-full"
+      <div className="w-full">
+        <Header onOpenContactForm={() => setIsContactModalOpen(true)} />
+
+        <ContactFormModal 
+          isOpen={isContactModalOpen} 
+          onClose={() => setIsContactModalOpen(false)} 
+        />
+
+        <main className="pb-14 md:pb-0">
+          <HeroSection onOpenContactForm={() => setIsContactModalOpen(true)} />
+          <ProjectOverviewSection onOpenContactForm={() => setIsContactModalOpen(true)} />
+          <MasterPlanSection onOpenContactForm={() => setIsContactModalOpen(true)} />
+          <Amenities3DSection amenities={amenities} />
+          <PlotConfigurationsSection plotConfigs={plotConfigs} onOpenContactForm={() => setIsContactModalOpen(true)} />
+          <GallerySection onOpenContactForm={() => setIsContactModalOpen(true)} />
+          <LocationSection onOpenContactForm={() => setIsContactModalOpen(true)} />
+          <FinalCTASection onOpenContactForm={() => setIsContactModalOpen(true)} />
+          <Footer />
+        </main>
+
+        {/* Mobile Sticky Bottom Action Bar (Contrasting Call & Enquire buttons) */}
+        <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden flex items-stretch shadow-[0_-4px_25px_rgba(0,0,0,0.18)] border-t border-neutral-200">
+          <a
+            href={`tel:${projectSnapshot.phone.replace(/\s+/g, "")}`}
+            className="flex-1 py-4 px-4 bg-white hover:bg-neutral-50 active:bg-neutral-100 flex items-center justify-center gap-2 text-[#4E3D35] font-extrabold text-xs uppercase tracking-widest border-r border-neutral-200 transition-colors"
+            aria-label={`Call ${projectSnapshot.phone}`}
           >
-            <Header onOpenContactForm={() => setIsContactModalOpen(true)} />
-
-            <ContactFormModal 
-              isOpen={isContactModalOpen} 
-              onClose={() => setIsContactModalOpen(false)} 
-            />
-
-            <motion.main
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1 }}
-              className="pb-14 md:pb-0"
-            >
-              <HeroSection onOpenContactForm={() => setIsContactModalOpen(true)} />
-              <ProjectOverviewSection onOpenContactForm={() => setIsContactModalOpen(true)} />
-              <MasterPlanSection onOpenContactForm={() => setIsContactModalOpen(true)} />
-              <Amenities3DSection amenities={amenities} />
-              <PlotConfigurationsSection plotConfigs={plotConfigs} onOpenContactForm={() => setIsContactModalOpen(true)} />
-              <GallerySection onOpenContactForm={() => setIsContactModalOpen(true)} />
-              <LocationSection onOpenContactForm={() => setIsContactModalOpen(true)} />
-              <FinalCTASection onOpenContactForm={() => setIsContactModalOpen(true)} />
-              <Footer />
-            </motion.main>
-
-            {/* Mobile Sticky Bottom Action Bar (Matches Reference Design) */}
-            <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-[#4E3D35] flex items-stretch shadow-2xl border-t border-white/10">
-              <a
-                href={`tel:${projectSnapshot.phone.replace(/\s+/g, "")}`}
-                className="flex-1 py-3.5 px-4 flex items-center justify-center gap-2 text-white font-bold text-xs uppercase tracking-widest border-r border-white/20 active:bg-white/10 transition-colors"
-                aria-label={`Call ${projectSnapshot.phone}`}
-              >
-                <Phone className="w-3.5 h-3.5 text-white fill-white" />
-                <span>CALL NOW</span>
-              </a>
-              <button
-                onClick={() => setIsContactModalOpen(true)}
-                className="flex-1 py-3.5 px-4 flex items-center justify-center gap-2 text-white font-bold text-xs uppercase tracking-widest active:bg-white/10 transition-colors cursor-pointer"
-                aria-label="Enquire Now"
-              >
-                <span>ENQUIRE NOW</span>
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <Phone className="w-3.5 h-3.5 text-[#4E3D35] fill-[#4E3D35]" />
+            <span>CALL NOW</span>
+          </a>
+          <button
+            onClick={() => setIsContactModalOpen(true)}
+            className="flex-1 py-4 px-4 bg-[#4E3D35] hover:bg-[#3f3029] active:bg-[#332620] flex items-center justify-center gap-2 text-white font-extrabold text-xs uppercase tracking-widest transition-colors cursor-pointer"
+            aria-label="Enquire Now"
+          >
+            <span>ENQUIRE NOW</span>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -164,13 +174,21 @@ const HeroSection = ({ onOpenContactForm }: { onOpenContactForm: () => void }) =
         <div className="lg:hidden flex flex-col w-full pt-16 sm:pt-20">
           {/* Top Hero Image with Overlapping Flexi Plan Box */}
           <div className="relative w-full h-[52vh] min-h-[350px] max-h-[480px]">
-            <Image 
-              src="/hero-bg.png" 
-              alt="Symphony Heights Tower - Boutique Community" 
-              className="w-full h-full object-cover object-bottom" 
-            />
+            <picture>
+              <source media="(max-width: 1023px)" srcSet="/hero-bg-mobile.webp" type="image/webp" />
+              <img 
+                src="/hero-bg-mobile.webp" 
+                alt="Symphony Heights Tower - Boutique Community" 
+                className="w-full h-full object-cover object-bottom"
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                width={800}
+                height={533}
+              />
+            </picture>
             {/* Soft gradient at bottom of image */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
 
             {/* Overlapping Brown Flexi Payment Box */}
             <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 w-[86%] max-w-[320px] bg-[#4E3D35] text-white py-3.5 px-4 shadow-xl z-20 rounded-xl border border-white/10 text-center">
@@ -220,7 +238,7 @@ const HeroSection = ({ onOpenContactForm }: { onOpenContactForm: () => void }) =
               <Button
                 size="lg"
                 variant="outline"
-                className="w-full bg-transparent border-[1.5px] border-[#4E3D35] text-[#4E3D35] hover:bg-[#4E3D35]/5 py-4 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 active:scale-[0.99] transition-all cursor-pointer h-auto"
+                className="w-full bg-white border-[1.5px] border-[#4E3D35] text-[#4E3D35] hover:bg-[#4E3D35]/5 py-4 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-sm active:scale-[0.99] transition-all cursor-pointer h-auto"
                 onClick={onOpenContactForm}
               >
                 <Download className="w-4 h-4" />
@@ -234,10 +252,15 @@ const HeroSection = ({ onOpenContactForm }: { onOpenContactForm: () => void }) =
         <div className="hidden lg:grid lg:grid-cols-2 min-h-screen">
           {/* LEFT: HERO IMAGE */}
           <div className="relative h-full">
-            <Image 
-              src="/hero-bg.png" 
+            <img 
+              src="/hero-bg.webp" 
               alt="Symphony Heights Tower - Boutique Community" 
-              className="absolute inset-0 w-full h-full object-cover object-bottom" 
+              className="absolute inset-0 w-full h-full object-cover object-bottom"
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+              width={1920}
+              height={1280}
             />
             <div className="absolute inset-0 bg-gradient-to-tr from-black/60 via-black/30 to-transparent" />
           </div>
@@ -370,7 +393,7 @@ const ProjectOverviewSection = ({ onOpenContactForm }: { onOpenContactForm: () =
             <CinematicReveal delay={0.25}>
               <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-primary/10 aspect-[4/3] sm:aspect-[16/11] group">
                 <Image
-                  src="/intimate-scale.jpg"
+                  src="/intimate-scale.webp"
                   alt="Symphony Heights Boutique Architecture"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
@@ -732,16 +755,16 @@ const PlotConfigurationsSection = ({
 };
 
 const galleryImages = [
-  { url: "/kitchen.jpg", title: "Modern Modular Kitchen" },
-  { url: "/ground3.jpg", title: "Grand Arrival & Landscaped Driveway" },
-  { url: "/pet-park.jpg", title: "Dedicated Pet Park & Green Buffer" },
-  { url: "/partyhall.jpg", title: "Double-Height Celebration Hall" },
-  { url: "/balcony.png", title: "Expansive Private Balconies" },
-  { url: "/building.png", title: "Boutique Architectural Elevation" },
-  { url: "/indoor-games.jpg", title: "Indoor Games & Leisure Zone" },
-  { url: "/cricpitch.jpg", title: "Cricket Practice Pitch" },
-  { url: "/roof5.jpg", title: "Rooftop Sky Living & Pool Deck" },
-  { url: "/building3.jpg", title: "Intimate Community Living" },
+  { url: "/kitchen.webp", title: "Modern Modular Kitchen" },
+  { url: "/ground3.webp", title: "Grand Arrival & Landscaped Driveway" },
+  { url: "/pet-park.webp", title: "Dedicated Pet Park & Green Buffer" },
+  { url: "/partyhall.webp", title: "Double-Height Celebration Hall" },
+  { url: "/balcony.webp", title: "Expansive Private Balconies" },
+  { url: "/building.webp", title: "Boutique Architectural Elevation" },
+  { url: "/indoor-games.webp", title: "Indoor Games & Leisure Zone" },
+  { url: "/cricpitch.webp", title: "Cricket Practice Pitch" },
+  { url: "/roof5.webp", title: "Rooftop Sky Living & Pool Deck" },
+  { url: "/building3.webp", title: "Intimate Community Living" },
 ];
 
 const GallerySection = ({ onOpenContactForm }: { onOpenContactForm: () => void }) => {

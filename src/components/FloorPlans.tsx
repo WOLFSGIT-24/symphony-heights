@@ -26,7 +26,7 @@ export default function FloorPlans({
         "Common Area (E) - 436 Sft",
         "Super Build Up Area (SBUA) (F=D+E) - 1818 Sft",
       ],
-      imageUrl: "/unit-402.png",
+      imageUrl: "/unit-402.webp",
       type: "3 BHK - 1818 Sft",
     },
     {
@@ -40,7 +40,7 @@ export default function FloorPlans({
         "Common Area (E) - 446 Sft",
         "Super Build Up Area (SBUA) (F=D+E) - 1857 Sft",
       ],
-      imageUrl: "/unit-1503.png",
+      imageUrl: "/unit-1503.webp",
       type: "3 BHK - 1857 Sft",
     },
   ];

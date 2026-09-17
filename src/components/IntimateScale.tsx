@@ -5,7 +5,7 @@ interface IntimateScaleProps {
 }
 
 export default function IntimateScale({ onRequestDownload }: IntimateScaleProps) {
-  const images = ["/building.png", "/balcony.png", "/building2.jpg", "/building3.jpg", "/building4.jpg"];
+  const images = ["/building.webp", "/balcony.webp", "/building2.webp", "/building3.webp", "/building4.webp"];
   const [currentIdx, setCurrentIdx] = useState(0);
 
   useEffect(() => {

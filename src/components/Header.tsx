@@ -61,9 +61,13 @@ export default function Header({ onOpenContactForm }: HeaderProps) {
             aria-label="Symphony Heights Home"
           >
             <img
-              src="/combo-logo.png"
+              src="/combo-logo.webp"
               alt="Symphony Heights by Disha Properties Logo"
               className="h-7 sm:h-9 md:h-11 lg:h-12 w-auto max-w-full object-contain"
+              width={220}
+              height={48}
+              loading="eager"
+              decoding="async"
             />
           </motion.button>
 

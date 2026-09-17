@@ -40,15 +40,15 @@ export default function Hero({ onOpenEnquiry, onRequestDownload }: HeroProps) {
 
           <div className="lg:hidden mt-12 mx-auto max-w-md p-4 sm:p-5 bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.06)] border border-neutral-100 flex items-center justify-between text-left">
             <div className="space-y-1">
-              <div className="text-xs sm:text-sm font-extrabold text-[#4E3D35]/85 uppercase tracking-wider font-paragraph">
+              <div className="text-sm sm:text-base font-extrabold text-[#4E3D35] uppercase tracking-wider font-paragraph leading-tight">
                 PREMIUM 3 BHK HOMES
               </div>
-              <div className="text-lg sm:text-xl font-heading font-extrabold text-[#4E3D35] tracking-tight leading-none">
+              <div className="text-xl sm:text-2xl font-heading font-extrabold text-[#4E3D35] tracking-tight leading-none mt-0.5">
                 STARTING ₹ 1.9 CR*
               </div>
             </div>
 
-            <div className="h-9 w-px bg-neutral-200 mx-3" />
+            <div className="h-10 w-px bg-neutral-200 mx-3 shrink-0" />
 
             <div className="flex items-center gap-1.5 font-paragraph shrink-0 text-[#4E3D35]">
               <MapPin className="h-4 w-4 text-[#4E3D35] stroke-[2.2] shrink-0" />

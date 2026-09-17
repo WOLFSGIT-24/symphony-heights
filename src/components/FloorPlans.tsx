@@ -29,20 +29,6 @@ export default function FloorPlans({
       imageUrl: "/unit-402.webp",
       type: "3 BHK - 1818 Sft",
     },
-    {
-      title: "3 BHK HOMES",
-      area: "1857 SQ.FT. SBUA",
-      details: [
-        "RERA Carpet Area (A) - 1174 Sft",
-        "Balcony Area (B) - 147 Sft",
-        "External Walls (C) - 90 Sft",
-        "Built Up Area (D= A+B+C) - 1411 Sft",
-        "Common Area (E) - 446 Sft",
-        "Super Build Up Area (SBUA) (F=D+E) - 1857 Sft",
-      ],
-      imageUrl: "/unit-1503.webp",
-      type: "3 BHK - 1857 Sft",
-    },
   ];
 
   const handleAction = (plan: any) => {

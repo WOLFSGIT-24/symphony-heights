@@ -81,15 +81,6 @@ const defaultPlotConfigs: PlotConfigurations[] = [
     availabilityStatus: 'Available',
     plotImage: '/unit-402.webp',
   },
-  {
-    _id: 'plan-2',
-    plotName: '3 BHK Home',
-    dimensions: '1857 SQ.FT. SBUA',
-    areaSqFt: 1857,
-    description: '',
-    availabilityStatus: 'Available',
-    plotImage: '/unit-1503.webp',
-  },
 ];
 
 export default function HomePage() {
@@ -252,15 +243,15 @@ const HeroSection = ({ onOpenContactForm }: { onOpenContactForm: () => void }) =
             {/* White Property Card */}
             <div className="w-full bg-white rounded-2xl p-4 sm:p-5 shadow-[0_4px_20px_rgba(0,0,0,0.06)] border border-neutral-100 flex items-center justify-between">
               <div className="space-y-1">
-                <div className="text-xs sm:text-sm font-extrabold text-soft-charcoal/85 uppercase tracking-wider font-paragraph">
+                <div className="text-sm sm:text-base font-extrabold text-soft-charcoal uppercase tracking-wider font-paragraph leading-tight">
                   PREMIUM 3 BHK HOMES
                 </div>
-                <div className="text-lg sm:text-xl font-heading font-extrabold text-soft-charcoal tracking-tight leading-none">
+                <div className="text-xl sm:text-2xl font-heading font-extrabold text-soft-charcoal tracking-tight leading-none mt-0.5">
                   STARTING ₹ 1.9 CR*
                 </div>
               </div>
 
-              <div className="h-9 w-px bg-neutral-200 mx-3" />
+              <div className="h-10 w-px bg-neutral-200 mx-3 shrink-0" />
 
               <div className="flex items-center gap-1.5 font-paragraph shrink-0 text-soft-charcoal">
                 <MapPin className="h-4 w-4 text-soft-charcoal stroke-[2.2] shrink-0" />
@@ -758,7 +749,7 @@ const PlotConfigurationsSection = ({
           </CinematicReveal>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10">
+        <div className={`grid gap-6 sm:gap-8 lg:gap-10 ${plotConfigs.length === 1 ? 'max-w-2xl mx-auto grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}>
           {plotConfigs.map((plot, i) => (
             <CinematicReveal key={plot._id || i} delay={i * 0.15}>
               <div className="group relative bg-white border border-primary/10 rounded-2xl overflow-hidden hover:border-primary/40 transition-all duration-500 hover:shadow-xl flex flex-col justify-between h-full p-6 sm:p-7 md:p-8">
@@ -1160,7 +1151,7 @@ const FinalCTASection = ({ onOpenContactForm }: { onOpenContactForm: () => void 
             </p>
           </CinematicReveal>
 
-          <CinematicReveal delay={0.3} className="flex justify-center pt-4">
+          <CinematicReveal delay={0.3} className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Button
               size="lg"
               className="bg-primary text-white hover:bg-primary/90 px-8 py-3.5 rounded-xl text-base font-paragraph font-semibold transition-all duration-300 w-full sm:w-auto cursor-pointer shadow-md"
@@ -1168,6 +1159,14 @@ const FinalCTASection = ({ onOpenContactForm }: { onOpenContactForm: () => void 
             >
               Book Private Site Visit
             </Button>
+
+            <a
+              href={`tel:${projectSnapshot.phone.replace(/\s+/g, '')}`}
+              className="border-2 border-primary text-primary hover:bg-primary hover:text-white px-8 py-3.5 rounded-xl text-base font-paragraph font-semibold transition-all duration-300 flex items-center justify-center gap-2 w-full sm:w-auto"
+            >
+              <Phone className="h-4 w-4" />
+              {projectSnapshot.phone}
+            </a>
           </CinematicReveal>
         </div>
       </div>

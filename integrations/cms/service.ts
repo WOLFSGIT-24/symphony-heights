@@ -68,15 +68,6 @@ const initialData: Record<string, WixDataItem[]> = {
       availabilityStatus: 'Available',
       plotImage: '/unit-402.webp',
     },
-    {
-      _id: 'plan-2',
-      plotName: '3 BHK Home',
-      dimensions: '1857 SQ.FT. SBUA',
-      areaSqFt: 1857,
-      description: '',
-      availabilityStatus: 'Available',
-      plotImage: '/unit-1503.webp',
-    },
   ],
 
   infrastructuredetails: [

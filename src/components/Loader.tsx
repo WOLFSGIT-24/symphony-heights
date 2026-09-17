@@ -1,74 +1,100 @@
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
 
-export default function Loader() {
+interface LoaderProps {
+  onComplete?: () => void;
+}
+
+export default function Loader({ onComplete }: LoaderProps) {
   const [stage, setStage] = useState(0);
 
   useEffect(() => {
-    const timer1 = setTimeout(() => setStage(1), 600);
-    const timer2 = setTimeout(() => setStage(2), 1400);
-    const timer3 = setTimeout(() => setStage(3), 2200);
+    const timer1 = setTimeout(() => setStage(1), 350);  // Draw decorative line
+    const timer2 = setTimeout(() => setStage(2), 900);  // Reveal tagline
+    const timer3 = setTimeout(() => setStage(3), 1700); // Begin fade-out
+    const timer4 = setTimeout(() => {
+      onComplete?.();
+    }, 2300); // Complete unmount
 
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
       clearTimeout(timer3);
+      clearTimeout(timer4);
     };
-  }, []);
+  }, [onComplete]);
 
   return (
     <motion.div
-      className="fixed inset-0 bg-marble z-[100] flex flex-col items-center justify-center p-6"
+      key="brand-entrance-loader"
       initial={{ opacity: 1 }}
       animate={{ opacity: stage >= 3 ? 0 : 1 }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className={`fixed inset-0 z-[9999] bg-[#f4f3ee] flex flex-col items-center justify-center p-6 select-none ${
+        stage >= 3 ? 'pointer-events-none' : 'pointer-events-auto'
+      }`}
     >
-      {/* Symphony Heights Logo */}
-      <motion.div
-        className="mb-8"
-        initial={{ opacity: 0, scale: 0.85 }}
-        animate={{ opacity: stage >= 0 ? 1 : 0, scale: stage >= 0 ? 1 : 0.85 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
-      >
-        <img
-          src="/combo-logo.webp"
-          alt="Symphony Heights by Disha Properties"
-          className="h-16 sm:h-20 w-auto object-contain drop-shadow-md"
-        />
-      </motion.div>
+      <div className="flex flex-col items-center max-w-sm w-full">
+        {/* Symphony Heights Logo */}
+        <motion.div
+          initial={{ opacity: 0, y: 15, scale: 0.92 }}
+          animate={{
+            opacity: stage >= 0 ? 1 : 0,
+            y: stage >= 0 ? 0 : 15,
+            scale: stage >= 0 ? 1 : 0.92,
+          }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-7"
+        >
+          <img
+            src="/combo-logo.webp"
+            alt="Symphony Heights by Disha Properties"
+            className="h-16 sm:h-20 w-auto object-contain drop-shadow-sm"
+          />
+        </motion.div>
 
-      {/* Decorative Line */}
-      <motion.svg
-        width="180"
-        height="24"
-        viewBox="0 0 180 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="mb-6"
-      >
-        <motion.path
-          d="M 0 12 Q 45 4, 90 12 T 180 12"
-          stroke="#584236"
-          strokeWidth="2"
-          strokeLinecap="round"
-          fill="none"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: stage >= 1 ? 1 : 0 }}
-          transition={{ duration: 1, ease: 'easeInOut' }}
-        />
-      </motion.svg>
+        {/* Decorative Wave Line */}
+        <div className="w-48 h-6 flex items-center justify-center mb-5">
+          <svg
+            width="180"
+            height="24"
+            viewBox="0 0 180 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-full h-auto overflow-visible"
+          >
+            <motion.path
+              d="M 0 12 Q 45 4, 90 12 T 180 12"
+              stroke="#4E3D35"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              fill="none"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{
+                pathLength: stage >= 1 ? 1 : 0,
+                opacity: stage >= 1 ? 1 : 0,
+              }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            />
+          </svg>
+        </div>
 
-      {/* Tagline */}
-      <motion.div
-        className="text-center"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: stage >= 2 ? 1 : 0, y: stage >= 2 ? 0 : 10 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
-      >
-        <p className="font-display text-xs sm:text-sm uppercase tracking-[0.25em] text-navy-primary/70 font-semibold">
-          Boutique Residences • Hennur
-        </p>
-      </motion.div>
+        {/* Tagline */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{
+            opacity: stage >= 2 ? 1 : 0,
+            y: stage >= 2 ? 0 : 10,
+          }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center"
+        >
+          <p className="font-paragraph text-[11px] sm:text-xs uppercase tracking-[0.28em] text-[#4E3D35]/80 font-bold">
+            Boutique Residences • Hennur
+          </p>
+        </motion.div>
+      </div>
     </motion.div>
   );
 }

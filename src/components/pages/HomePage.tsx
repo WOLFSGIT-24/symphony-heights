@@ -88,6 +88,7 @@ export default function HomePage() {
   const [amenities, setAmenities] = useState<ProjectAmenities[]>(defaultAmenities);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isFloorPlansUnlocked, setIsFloorPlansUnlocked] = useState(false);
+  const [showLoader, setShowLoader] = useState(true);
 
   useEffect(() => {
     try {
@@ -140,7 +141,13 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="bg-old-lace text-soft-charcoal min-h-screen overflow-x-hidden selection:bg-primary/20 selection:text-primary">
+    <div className="bg-old-lace text-soft-charcoal min-h-screen overflow-x-hidden selection:bg-primary/20 selection:text-primary relative">
+      <AnimatePresence>
+        {showLoader && (
+          <Loader key="loader" onComplete={() => setShowLoader(false)} />
+        )}
+      </AnimatePresence>
+
       <div className="w-full">
         <Header onOpenContactForm={() => setIsContactModalOpen(true)} />
 

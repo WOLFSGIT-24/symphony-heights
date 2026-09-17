@@ -7,9 +7,10 @@ import { BaseCrudService } from '@/integrations';
 interface ContactFormModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export default function ContactFormModal({ isOpen, onClose }: ContactFormModalProps) {
+export default function ContactFormModal({ isOpen, onClose, onSuccess }: ContactFormModalProps) {
   const [formData, setFormData] = useState({
     name: '',
     phoneNumber: '',
@@ -107,6 +108,9 @@ export default function ContactFormModal({ isOpen, onClose }: ContactFormModalPr
 
       setSubmitSuccess(true);
       setFormData({ name: '', phoneNumber: '', email: '' });
+      if (onSuccess) {
+        onSuccess();
+      }
 
       setTimeout(() => {
         onClose();

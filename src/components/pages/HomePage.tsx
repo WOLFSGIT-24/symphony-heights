@@ -96,6 +96,26 @@ export default function HomePage() {
   const [plotConfigs, setPlotConfigs] = useState<PlotConfigurations[]>(defaultPlotConfigs);
   const [amenities, setAmenities] = useState<ProjectAmenities[]>(defaultAmenities);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isFloorPlansUnlocked, setIsFloorPlansUnlocked] = useState(false);
+
+  useEffect(() => {
+    try {
+      if (localStorage.getItem('symphony_floorplans_unlocked') === 'true') {
+        setIsFloorPlansUnlocked(true);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
+  const handleUnlockSuccess = () => {
+    setIsFloorPlansUnlocked(true);
+    try {
+      localStorage.setItem('symphony_floorplans_unlocked', 'true');
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -136,6 +156,7 @@ export default function HomePage() {
         <ContactFormModal 
           isOpen={isContactModalOpen} 
           onClose={() => setIsContactModalOpen(false)} 
+          onSuccess={handleUnlockSuccess}
         />
 
         <main className="pb-14 md:pb-0">
@@ -143,7 +164,11 @@ export default function HomePage() {
           <ProjectOverviewSection onOpenContactForm={() => setIsContactModalOpen(true)} />
           <MasterPlanSection onOpenContactForm={() => setIsContactModalOpen(true)} />
           <Amenities3DSection amenities={amenities} />
-          <PlotConfigurationsSection plotConfigs={plotConfigs} onOpenContactForm={() => setIsContactModalOpen(true)} />
+          <PlotConfigurationsSection 
+            plotConfigs={plotConfigs} 
+            isUnlocked={isFloorPlansUnlocked}
+            onOpenContactForm={() => setIsContactModalOpen(true)} 
+          />
           <GallerySection onOpenContactForm={() => setIsContactModalOpen(true)} />
           <LocationSection onOpenContactForm={() => setIsContactModalOpen(true)} />
           <FinalCTASection onOpenContactForm={() => setIsContactModalOpen(true)} />
@@ -692,11 +717,23 @@ const MasterPlanSection = ({ onOpenContactForm }: { onOpenContactForm: () => voi
 
 const PlotConfigurationsSection = ({ 
   plotConfigs,
+  isUnlocked,
   onOpenContactForm 
 }: { 
-  plotConfigs: PlotConfigurations[],
-  onOpenContactForm: () => void 
+  plotConfigs: PlotConfigurations[];
+  isUnlocked: boolean;
+  onOpenContactForm: () => void;
 }) => {
+  const [activePlanModal, setActivePlanModal] = useState<PlotConfigurations | null>(null);
+
+  const handleCardAction = (plot: PlotConfigurations) => {
+    if (!isUnlocked) {
+      onOpenContactForm();
+    } else {
+      setActivePlanModal(plot);
+    }
+  };
+
   return (
     <section id="plots" className="py-16 sm:py-24 md:py-32 bg-old-lace">
       <div className="container mx-auto px-4 sm:px-6 md:px-8">
@@ -736,12 +773,34 @@ const PlotConfigurationsSection = ({
                   </div>
 
                   {plot.plotImage && (
-                    <div className="aspect-[16/11] bg-old-lace/70 rounded-xl overflow-hidden mb-5 flex items-center justify-center p-2 sm:p-3">
+                    <div 
+                      onClick={() => handleCardAction(plot)}
+                      className="relative aspect-[16/11] bg-old-lace/70 rounded-xl overflow-hidden mb-5 flex items-center justify-center p-2 sm:p-3 cursor-pointer group/image"
+                    >
                       <Image
                         src={plot.plotImage}
                         alt={plot.plotName || 'Floor plan'}
-                        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
+                        className={`w-full h-full object-contain transition-all duration-700 ${
+                          !isUnlocked 
+                            ? 'blur-md filter scale-105 select-none' 
+                            : 'blur-none group-hover/image:scale-105'
+                        }`}
                       />
+
+                      {/* Locked Overlay */}
+                      {!isUnlocked && (
+                        <div className="absolute inset-0 bg-black/45 backdrop-blur-[5px] flex flex-col items-center justify-center text-white p-4 text-center transition-all group-hover/image:bg-black/55">
+                          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/20 border border-white/30 backdrop-blur-md flex items-center justify-center mb-2.5 shadow-lg group-hover/image:scale-110 transition-transform">
+                            <Lock className="w-5 h-5 text-white" />
+                          </div>
+                          <span className="font-heading text-sm sm:text-base font-bold tracking-wide mb-1">
+                            Floor Plan Locked
+                          </span>
+                          <span className="font-paragraph text-[11px] sm:text-xs text-white/85 max-w-[220px] leading-snug">
+                            Click to unlock & reveal high-resolution layout
+                          </span>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -754,10 +813,24 @@ const PlotConfigurationsSection = ({
 
                 <div className="pt-2">
                   <Button
-                    className="w-full bg-primary text-white hover:bg-primary/90 rounded-xl py-3.5 font-paragraph font-semibold transition-all duration-300 cursor-pointer text-sm sm:text-base"
-                    onClick={onOpenContactForm}
+                    className={`w-full rounded-xl py-3.5 font-paragraph font-semibold transition-all duration-300 cursor-pointer text-sm sm:text-base flex items-center justify-center gap-2 ${
+                      !isUnlocked
+                        ? 'bg-primary text-white hover:bg-primary/90 shadow-md'
+                        : 'bg-[#4E3D35] text-white hover:bg-[#3f3029]'
+                    }`}
+                    onClick={() => handleCardAction(plot)}
                   >
-                    Get Floor Plans
+                    {!isUnlocked ? (
+                      <>
+                        <Lock className="w-4 h-4" />
+                        <span>Get Floor Plans</span>
+                      </>
+                    ) : (
+                      <>
+                        <ZoomIn className="w-4 h-4" />
+                        <span>View High-Res Blueprint</span>
+                      </>
+                    )}
                   </Button>
                 </div>
               </div>
@@ -765,6 +838,70 @@ const PlotConfigurationsSection = ({
           ))}
         </div>
       </div>
+
+      {/* Unlocked Floor Plan Lightbox Modal */}
+      <AnimatePresence>
+        {activePlanModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
+            onClick={() => setActivePlanModal(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-2xl max-w-4xl w-full p-5 sm:p-7 shadow-2xl relative max-h-[90vh] flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-primary/10 pb-4 mb-4">
+                <div>
+                  <h3 className="font-heading text-xl sm:text-2xl font-bold text-soft-charcoal">
+                    {activePlanModal.plotName} ({activePlanModal.dimensions})
+                  </h3>
+                  <span className="font-paragraph text-xs text-muted-gray uppercase tracking-wider">
+                    Symphony Heights • Architectural Unit Blueprint
+                  </span>
+                </div>
+                <button
+                  onClick={() => setActivePlanModal(null)}
+                  className="w-9 h-9 rounded-full bg-pale-sage/20 text-soft-charcoal hover:bg-pale-sage/40 flex items-center justify-center transition-colors cursor-pointer"
+                  aria-label="Close modal"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-auto bg-[#dcd3c2]/20 rounded-xl p-4 flex items-center justify-center min-h-[350px]">
+                {activePlanModal.plotImage && (
+                  <Image
+                    src={activePlanModal.plotImage}
+                    alt={activePlanModal.plotName || 'Floor plan'}
+                    className="max-h-[65vh] w-auto object-contain rounded-lg shadow-sm"
+                  />
+                )}
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4 pt-3 border-t border-primary/10">
+                <span className="font-paragraph text-xs text-muted-gray">
+                  Super Built-up Area: {activePlanModal.dimensions}
+                </span>
+                <Button
+                  className="bg-primary text-white hover:bg-primary/90 rounded-xl px-6 py-2.5 text-xs font-bold uppercase tracking-wider cursor-pointer w-full sm:w-auto"
+                  onClick={() => {
+                    setActivePlanModal(null);
+                    onOpenContactForm();
+                  }}
+                >
+                  Book Private Site Visit
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
